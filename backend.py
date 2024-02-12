@@ -107,11 +107,12 @@ def testSmartHome():
     doorbell = SmartDoorBell()
 
     plugOne.toggleSwitch()
+
     plugOne.setConsumptionRate("test")
     plugOne.setConsumptionRate(True)
     plugOne.setConsumptionRate(150)
-
     plugTwo.setConsumptionRate(25)
+
     doorbell.setOption(2)
     doorbell.setOption(True)
 
@@ -122,6 +123,7 @@ def testSmartHome():
 
     home.toggleSwitch(1)
     print(home)
+
     home.turnOnAll()
     print("!!TURNED ON ALL DEVICES!!")
     print(home)
