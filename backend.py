@@ -129,4 +129,3 @@ def testSmartHome():
     print(home)
 
 
-testSmartHome()
