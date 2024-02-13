@@ -8,10 +8,24 @@ class SmartHomeSystem:
         self.win.title("Smart Home System")
         self.win.geometry("")
         self.mainFrame = Frame(self.win)
-        self.win.configure(bg='aquamarine')
+        self.mainFrame.grid(column=0, row=0)
 
     def run(self):
+        self.createWidgets()
         self.win.mainloop()
+
+    def createWidgets(self):
+        turnOnAllButton = Button(
+            self.mainFrame,
+            text="Turn On All"
+        )
+        turnOnAllButton.grid(column=0, row=0)
+
+        turnOffAllButton = Button(
+            self.mainFrame,
+            text="Turn Off All"
+        )
+        turnOffAllButton.grid(column=1, row=0)
 
 
 def setUpHome():
