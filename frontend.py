@@ -1,9 +1,16 @@
 from backend import *
+from tkinter import *
 
 
 class SmartHomeSystem:
     def __init__(self):
-        pass
+        self.win = Tk()
+        self.win.title("Smart Home System")
+        self.win.geometry("")
+        self.mainFrame = Frame(self.win)
+
+    def run(self):
+        self.win.mainloop()
 
 
 def setUpHome():
@@ -17,7 +24,8 @@ def setUpHome():
             try:
                 index = int(input("Enter the catalog index of the device you'd like to add: "))
 
-                if index == 0:
+                if index == 0:  # Smart Plug
+                    # Ensure a value is entered inside the consumption rate w/o needing to renter an index.
                     while True:
                         try:
                             consumption_rate = int(input("Enter the consumption rate of the Smart Plug: "))
@@ -26,7 +34,7 @@ def setUpHome():
                         except ValueError:
                             print("Invalid consumption rate. Please enter a number.")
 
-                elif index == 1:
+                elif index == 1:  # Smart Doorbell
                     device = deviceChoices[index]()
 
                 else:
@@ -43,7 +51,10 @@ def setUpHome():
 
 
 def main():
-    setUpHome()
+    home = setUpHome()
+
+    system = SmartHomeSystem()
+    system.run()
 
 
 main()
