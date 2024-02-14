@@ -6,7 +6,6 @@ class SmartHomeSystem:
     def __init__(self):
         self.win = Tk()
         self.win.title("Smart Home System")
-        self.win.geometry("")
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(column=0, row=0, padx=10, pady=10)
 
@@ -25,27 +24,50 @@ class SmartHomeSystem:
             self.mainFrame,
             text="Turn Off All"
         )
-        turnOffAllButton.grid(column=1, row=0, pady=(0, 10))
+        turnOffAllButton.grid(column=1, row=0, pady=(0, 10), columnspan=2)
 
         # Initialise the 5 devices
         for i in range(len(devices)):
             device = devices[i]
             deviceStatus = "On" if device.getSwitchedOn() else "Off"
 
+            togglePower = Button(
+                self.mainFrame,
+                text=f"Toggle Power"
+            )
+            togglePower.grid(column=1, row=i+1, padx=(10, 0))
+
             if isinstance(device, SmartPlug):
                 deviceLabel = Label(
                     self.mainFrame,
                     text=f"Smart Plug: {deviceStatus}, Consumption Rate: {device.getConsumptionRate()}"
                 )
-                deviceLabel.grid(column=0, row=i+1)
+                deviceLabel.grid(column=0, row=i+1, sticky="w")
 
             else:
                 deviceOption = "On" if device.getOption() else "Off"
+
                 deviceLabel = Label(
                     self.mainFrame,
                     text=f"Smart Doorbell: {deviceStatus}, Sleep Mode: {deviceOption}"
                 )
-                deviceLabel.grid(column=0, row=i+1)
+                deviceLabel.grid(column=0, row=i+1, sticky="w")
+
+            editOption = Button(
+                self.mainFrame,
+                text="Edit Device"
+            )
+            editOption.grid(column=2, row=i+1, padx=(10, 0))
+
+            removeDevice = Button(
+                self.mainFrame,
+                text="Delete Device"
+            )
+            removeDevice.grid(column=3, row=i+1, padx=(10, 0))
+
+
+
+
 
 
 def setUpHome():
