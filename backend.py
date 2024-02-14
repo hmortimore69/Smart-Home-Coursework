@@ -53,18 +53,18 @@ class SmartHome:
     def getDevices(self) -> list:
         return self.devices
 
-    def getDevicesAt(self, index) -> object:
-        return self.devices[index]
+    def getDevicesAt(self, i) -> object:
+        return self.devices[i]
 
     def addDevice(self, device):
         if isinstance(device, (SmartPlug, SmartDoorBell)):
             self.devices.append(device)
 
-    def toggleSwitch(self, index):
-        if not isinstance(index, int) or index not in range(len(self.devices) - 1):
-            return
+    def removeDevice(self, i):
+        self.devices.pop(i)
 
-        self.devices[index].toggleSwitch()
+    def toggleSwitch(self, i):
+        self.devices[i].toggleSwitch()
 
     def turnOnAll(self):
         for device in self.devices:

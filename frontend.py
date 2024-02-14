@@ -39,12 +39,6 @@ class SmartHomeSystem:
         for i, device in enumerate(self.devices):
             deviceStatus = "On" if device.getSwitchedOn() else "Off"
 
-            togglePower = Button(
-                self.mainFrame,
-                text=f"Toggle Power"
-            )
-            togglePower.grid(column=1, row=i+1, padx=(10, 0))
-
             if isinstance(device, SmartPlug):
                 deviceLabel = Label(
                     self.mainFrame,
@@ -61,6 +55,13 @@ class SmartHomeSystem:
                 )
                 deviceLabel.grid(column=0, row=i+1, sticky="w")
 
+            togglePower = Button(
+                self.mainFrame,
+                text="Toggle Power",
+                command=lambda n=i: self.toggleSwitchButtonClicked(n)
+            )
+            togglePower.grid(column=1, row=i+1, padx=(10, 0))
+
             editOption = Button(
                 self.mainFrame,
                 text="Edit Device"
@@ -69,7 +70,8 @@ class SmartHomeSystem:
 
             removeDevice = Button(
                 self.mainFrame,
-                text="Delete Device"
+                text="Delete Device",
+                command=lambda n=i: self.deleteDeviceButtonClicked(n)
             )
             removeDevice.grid(column=3, row=i+1, padx=(10, 0))
 
@@ -81,29 +83,14 @@ class SmartHomeSystem:
         addDevice.grid(column=0, row=len(self.devices)+1)
 
     def addDeviceButtonClicked(self):
-        index = input("Please enter the index of the device you'd like to add: ")
+        pass
 
-        while index not in ["0", "1"]:
-            print("Invalid argument. Please enter a valid catalog index.")
-            index = input("Please enter the index of the device you'd like to add: ")
+    def toggleSwitchButtonClicked(self, i):
+        self.home.toggleSwitch(i)
+        self.updateWidgets()
 
-        if index == "0":
-            rate = input("Please enter the consumption rate of your smart plug: ")
-
-            while not rate.isnumeric():
-                print("Invalid argument. Please enter a valid number.")
-                rate = input("Please enter the consumption rate of your smart plug: ")
-
-            print(f"Added a Smart Plug device with a consumption rate of {rate}.")
-            # Assuming home is accessible within the SmartHomeSystem instance
-            self.home.addDevice(SmartPlug(int(rate)))
-
-        else:
-            print("Added a Smart Doorbell device.")
-            # Assuming home is accessible within the SmartHomeSystem instance
-            self.home.addDevice(SmartDoorBell())
-
-        # Update the widgets after adding the device
+    def deleteDeviceButtonClicked(self, i):
+        self.home.removeDevice(i)
         self.updateWidgets()
 
 
