@@ -1,5 +1,5 @@
 class SmartPlug:
-    def __init__(self, consumptionRate: int):
+    def __init__(self, consumptionRate):
         self.switchedOn = False
         self.consumptionRate = consumptionRate
 
@@ -53,20 +53,18 @@ class SmartHome:
     def getDevices(self) -> list:
         return self.devices
 
-    def getDevicesAt(self, index):
-        if not isinstance(index, int) or index not in range(len(self.devices) - 1):
-            return f"Please enter a valid index from 0 -> {len(self.devices)}\n"
+    def getDevicesAt(self, index) -> object:
+        return self.devices[index]
 
     def addDevice(self, device):
         if isinstance(device, (SmartPlug, SmartDoorBell)):
             self.devices.append(device)
 
-    def toggleSwitch(self, index) -> str:
+    def toggleSwitch(self, index):
         if not isinstance(index, int) or index not in range(len(self.devices) - 1):
-            return f"Please enter a valid index from 0 -> {len(self.devices)}\n"
+            return
 
         self.devices[index].toggleSwitch()
-        return f"Toggled the switch of {self.devices[index]}\n"
 
     def turnOnAll(self):
         for device in self.devices:
