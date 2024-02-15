@@ -25,13 +25,16 @@ class SmartHomeSystem:
     def createWidgets(self):
         turnOnAllButton = Button(
             self.mainFrame,
-            text="Turn On All"
+            text="Turn On All",
+            command=lambda: self.turnOnAllButtonClicked()
         )
         turnOnAllButton.grid(column=0, row=0, pady=(0, 10))
 
         turnOffAllButton = Button(
             self.mainFrame,
-            text="Turn Off All"
+            text="Turn Off All",
+            command=lambda: self.turnOffAllButtonClicked()
+
         )
         turnOffAllButton.grid(column=1, row=0, pady=(0, 10), columnspan=2)
 
@@ -81,6 +84,14 @@ class SmartHomeSystem:
             command=self.addDeviceButtonClicked
         )
         addDevice.grid(column=0, row=len(self.devices)+1)
+
+    def turnOnAllButtonClicked(self):
+        self.home.turnOnAll()
+        self.updateWidgets()
+
+    def turnOffAllButtonClicked(self):
+        self.home.turnOffAll()
+        self.updateWidgets()
 
     def addDeviceButtonClicked(self):
         pass
