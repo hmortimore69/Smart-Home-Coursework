@@ -107,7 +107,6 @@ class SmartHomeSystem:
 
 def setUpHome():
     home = SmartHome()
-    deviceChoices = [SmartPlug, SmartDoorBell]
 
     print("Available Device Types:\n[0] - Smart Plug\n[1] - Smart Doorbell\nAdd 5 devices by referencing their index.")
 
@@ -125,8 +124,7 @@ def setUpHome():
                 print("Invalid argument. Please enter a valid number.")
                 rate = input("Please enter the consumption rate of your smart plug: ")
 
-            print(f"Added a Smart Plug device with a consumption rate of {rate}.")
-            home.addDevice(SmartPlug(int(rate)))
+            print(f"Added a Smart Plug device with a consumption rate of {rate}.")            home.addDevice(SmartPlug(int(rate)))
 
         else:
             print("Added a Smart Doorbell device.")

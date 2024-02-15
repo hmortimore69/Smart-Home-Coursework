@@ -13,8 +13,6 @@ class SmartPlug:
         return self.consumptionRate
 
     def setConsumptionRate(self, rate):
-        if not isinstance(rate, int):
-            return "Please enter a valid number\n"
         self.consumptionRate = rate
 
     def __str__(self) -> str:
@@ -37,9 +35,6 @@ class SmartDoorBell:
         return self.sleepMode
 
     def setOption(self, option):
-        if str(option).lower() not in ["true", "false"]:
-            return "Invalid sleep mode option. Please enter True or False\n"
-
         self.sleepMode = bool(option)
 
     def __str__(self) -> str:
@@ -57,8 +52,7 @@ class SmartHome:
         return self.devices[i]
 
     def addDevice(self, device):
-        if isinstance(device, (SmartPlug, SmartDoorBell)):
-            self.devices.append(device)
+        self.devices.append(device)
 
     def removeDevice(self, i):
         self.devices.pop(i)
