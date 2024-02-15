@@ -28,7 +28,7 @@ class SmartHomeSystem:
             text="Turn On All",
             command=lambda: self.turnOnAllButtonClicked()
         )
-        turnOnAllButton.grid(column=0, row=0, pady=(0, 10))
+        turnOnAllButton.grid(column=0, row=0, padx=(10, 100), pady=(0, 10))
 
         turnOffAllButton = Button(
             self.mainFrame,
@@ -36,7 +36,7 @@ class SmartHomeSystem:
             command=lambda: self.turnOffAllButtonClicked()
 
         )
-        turnOffAllButton.grid(column=1, row=0, pady=(0, 10), columnspan=2)
+        turnOffAllButton.grid(column=0, row=0, padx=(100, 10), pady=(0, 10))
 
         # Initialise the 5 devices
         for i, device in enumerate(self.devices):
@@ -67,7 +67,8 @@ class SmartHomeSystem:
 
             editOption = Button(
                 self.mainFrame,
-                text="Edit Device"
+                text="Edit Device",
+                command=lambda n=i: self.editDeviceButtonClicked(n)
             )
             editOption.grid(column=2, row=i+1, padx=(10, 0))
 
@@ -93,16 +94,19 @@ class SmartHomeSystem:
         self.home.turnOffAll()
         self.updateWidgets()
 
-    def addDeviceButtonClicked(self):
-        pass
-
     def toggleSwitchButtonClicked(self, i):
         self.home.toggleSwitch(i)
         self.updateWidgets()
 
+    def editDeviceButtonClicked(self, i):
+        editWin = Toplevel(self.win)
+
     def deleteDeviceButtonClicked(self, i):
         self.home.removeDevice(i)
         self.updateWidgets()
+
+    def addDeviceButtonClicked(self):
+        pass
 
 
 def setUpHome():
@@ -124,7 +128,8 @@ def setUpHome():
                 print("Invalid argument. Please enter a valid number.")
                 rate = input("Please enter the consumption rate of your smart plug: ")
 
-            print(f"Added a Smart Plug device with a consumption rate of {rate}.")            home.addDevice(SmartPlug(int(rate)))
+            print(f"Added a Smart Plug device with a consumption rate of {rate}.")
+            home.addDevice(SmartPlug(int(rate)))
 
         else:
             print("Added a Smart Doorbell device.")
