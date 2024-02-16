@@ -105,11 +105,33 @@ class SmartHomeSystem:
         self.editWin = Toplevel(self.win)
 
         if isinstance(self.devices[i], SmartPlug):
+            consumptionRateVar = StringVar()
+            consumptionRateVar.set(str(self.devices[i].getConsumptionRate()))
+
             editLabel = Label(
                 self.editWin,
                 text="Set Consumption Rate"
             )
             editLabel.grid(column=0, row=0)
+
+            consumptionRateSpinbox = Spinbox(
+                self.editWin,
+                from_=0,
+                to=150,
+                increment=1,
+                width=3,
+                textvariable=consumptionRateVar,
+                validate="key",
+                validatecommand=(self.editWin.register(validateEntry), "%P")
+            )
+            consumptionRateSpinbox.grid(column=0, row=2)
+
+            consumptionRateConfirmButton = Button(
+                self.editWin,
+                text="Confirm",
+                command=lambda n=i: self.setPlugConsumption(i, consumptionRateSpinbox.get())
+            )
+            consumptionRateConfirmButton.grid(column=0, row=6, padx=60, pady=(10, 10))
 
         else:
             optionValue = BooleanVar()
@@ -149,6 +171,11 @@ class SmartHomeSystem:
         self.editWin.destroy()
         self.updateWidgets()
 
+    def setPlugConsumption(self, i, value):
+        self.home.devices[i].setConsumptionRate(value)
+        self.editWin.destroy()
+        self.updateWidgets()
+
     def deleteDeviceButtonClicked(self, i):
         self.home.removeDevice(i)
         self.updateWidgets()
@@ -172,7 +199,7 @@ def setUpHome():
         if index == "0":
             rate = input("Please enter the consumption rate of your smart plug: ")
 
-            while not rate.isnumeric():
+            while not rate.isdigit() or int(rate) < 0 or int(rate) > 150:
                 print("Invalid argument. Please enter a valid number.")
                 rate = input("Please enter the consumption rate of your smart plug: ")
 
@@ -184,6 +211,15 @@ def setUpHome():
             home.addDevice(SmartDoorBell())
 
     return home
+
+
+def validateEntry(text):
+    if text.isdigit() or not text:
+        if text and int(text) > 150:
+            return False
+        return True
+    else:
+        return False
 
 
 def main():
