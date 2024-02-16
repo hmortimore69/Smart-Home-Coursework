@@ -10,14 +10,16 @@ class SmartHomeSystem:
         self.home = home
         self.devices = home.getDevices()
 
+        self.backgroundColour = "teal"
+
         self.win = Tk()
         self.win.title("Smart Home System")
 
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(column=0, row=0, padx=10, pady=10)
 
-        self.win.configure(bg="teal")
-        self.mainFrame.configure(bg="teal")
+        self.win.configure(bg=self.backgroundColour)
+        self.mainFrame.configure(bg=self.backgroundColour)
 
     def run(self):
         self.createWidgets()
