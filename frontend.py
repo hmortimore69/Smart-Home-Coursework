@@ -4,13 +4,20 @@ from tkinter import *
 
 class SmartHomeSystem:
     def __init__(self, home):
-        self.home = home
         self.editWin = None
+        self.addWin = None
+
+        self.home = home
         self.devices = home.getDevices()
+
         self.win = Tk()
         self.win.title("Smart Home System")
+
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(column=0, row=0, padx=10, pady=10)
+
+        self.win.configure(bg="teal")
+        self.mainFrame.configure(bg="teal")
 
     def run(self):
         self.createWidgets()
@@ -103,6 +110,7 @@ class SmartHomeSystem:
 
     def editDeviceButtonClicked(self, i):
         self.editWin = Toplevel(self.win)
+        self.editWin.configure(bg="aquamarine")
 
         if isinstance(self.devices[i], SmartPlug):
             consumptionRateVar = StringVar()
@@ -181,7 +189,7 @@ class SmartHomeSystem:
         self.updateWidgets()
 
     def addDeviceButtonClicked(self):
-        pass
+        self.addWin = Toplevel(self.win)
 
 
 def setUpHome():
