@@ -5,6 +5,7 @@ from tkinter import *
 class SmartHomeSystem:
     def __init__(self, home):
         self.home = home
+        self.editWin = None
         self.devices = home.getDevices()
         self.win = Tk()
         self.win.title("Smart Home System")
@@ -23,6 +24,8 @@ class SmartHomeSystem:
         self.createWidgets()
 
     def createWidgets(self):
+        self.devices = self.home.getDevices()
+
         turnOnAllButton = Button(
             self.mainFrame,
             text="Turn On All",
@@ -99,7 +102,52 @@ class SmartHomeSystem:
         self.updateWidgets()
 
     def editDeviceButtonClicked(self, i):
-        editWin = Toplevel(self.win)
+        self.editWin = Toplevel(self.win)
+
+        if isinstance(self.devices[i], SmartPlug):
+            editLabel = Label(
+                self.editWin,
+                text="Set Consumption Rate"
+            )
+            editLabel.grid(column=0, row=0)
+
+        else:
+            optionValue = BooleanVar()
+            optionValue.set(self.home.devices[i].getOption())
+
+            editLabel = Label(
+                self.editWin,
+                text="Sleep Mode"
+            )
+            editLabel.grid(column=0, row=0, padx=60, pady=(10, 10))
+
+            trueButton = Radiobutton(
+                self.editWin,
+                text="On",
+                variable=optionValue,
+                value=True
+            )
+            trueButton.grid(column=0, row=2)
+
+            falseButton = Radiobutton(
+                self.editWin,
+                text="Off",
+                variable=optionValue,
+                value=False
+            )
+            falseButton.grid(column=0, row=3)
+
+            editConfirmButton = Button(
+                self.editWin,
+                text="Confirm",
+                command=lambda n=i: self.setCustomDeviceOption(n, optionValue.get())
+            )
+            editConfirmButton.grid(column=0, row=6, padx=60, pady=(10, 10))
+
+    def setCustomDeviceOption(self, i, value):
+        self.home.devices[i].setOption(value)
+        self.editWin.destroy()
+        self.updateWidgets()
 
     def deleteDeviceButtonClicked(self, i):
         self.home.removeDevice(i)
