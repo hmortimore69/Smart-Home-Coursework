@@ -1,6 +1,5 @@
 from backend import *
 from tkinter import *
-from tkinter import ttk
 
 
 class SmartHomeSystem:
@@ -34,14 +33,14 @@ class SmartHomeSystem:
     def createWidgets(self):
         self.devices = self.home.getDevices()
 
-        turnOnAllButton = ttk.Button(
+        turnOnAllButton = Button(
             self.mainFrame,
             text="Turn On All",
             command=lambda: self.turnOnAllButtonClicked()
         )
         turnOnAllButton.grid(column=0, row=0, padx=(10, 100), pady=(0, 10))
 
-        turnOffAllButton = ttk.Button(
+        turnOffAllButton = Button(
             self.mainFrame,
             text="Turn Off All",
             command=lambda: self.turnOffAllButtonClicked()
@@ -54,7 +53,7 @@ class SmartHomeSystem:
             deviceStatus = "On" if device.getSwitchedOn() else "Off"
 
             if isinstance(device, SmartPlug):
-                deviceLabel = ttk.Label(
+                deviceLabel = Label(
                     self.mainFrame,
                     text=f"Smart Plug: {deviceStatus}, Consumption Rate: {device.getConsumptionRate()}"
                 )
@@ -63,39 +62,39 @@ class SmartHomeSystem:
             else:
                 deviceOption = "On" if device.getOption() else "Off"
 
-                deviceLabel = ttk.Label(
+                deviceLabel = Label(
                     self.mainFrame,
                     text=f"Smart Doorbell: {deviceStatus}, Sleep Mode: {deviceOption}"
                 )
                 deviceLabel.grid(column=0, row=i+1, sticky="w")
 
-            togglePower = ttk.Button(
+            togglePower = Button(
                 self.mainFrame,
                 text="Toggle Power",
                 command=lambda n=i: self.toggleSwitchButtonClicked(n)
             )
             togglePower.grid(column=1, row=i+1, padx=(10, 0))
 
-            editOption = ttk.Button(
+            editOption = Button(
                 self.mainFrame,
                 text="Edit Device",
                 command=lambda n=i: self.editDeviceButtonClicked(n)
             )
             editOption.grid(column=2, row=i+1, padx=(10, 0))
 
-            removeDevice = ttk.Button(
+            removeDevice = Button(
                 self.mainFrame,
                 text="Delete Device",
                 command=lambda n=i: self.deleteDeviceButtonClicked(n)
             )
             removeDevice.grid(column=3, row=i+1, padx=(10, 0))
 
-        addDevice = ttk.Button(
+        addDevice = Button(
             self.mainFrame,
             text="Add Device",
             command=self.addDeviceButtonClicked
         )
-        addDevice.grid(column=0, row=len(self.devices)+1)
+        addDevice.grid(column=0, row=len(self.devices)+1, pady=(10, 0))
 
     def turnOnAllButtonClicked(self):
         self.home.turnOnAll()
@@ -111,19 +110,19 @@ class SmartHomeSystem:
 
     def editDeviceButtonClicked(self, i):
         self.editWin = Toplevel(self.win)
-        self.editWin.configure(bg="aquamarine")
+        self.editWin.configure(bg="teal")
 
         if isinstance(self.devices[i], SmartPlug):
             consumptionRateVar = StringVar()
             consumptionRateVar.set(str(self.devices[i].getConsumptionRate()))
 
-            editLabel = ttk.Label(
+            editLabel = Label(
                 self.editWin,
                 text="Set Consumption Rate"
             )
-            editLabel.grid(column=0, row=0)
+            editLabel.grid(column=0, row=0, pady=(10, 0))
 
-            consumptionRateSpinbox = ttk.Spinbox(
+            consumptionRateSpinbox = Spinbox(
                 self.editWin,
                 from_=0,
                 to=150,
@@ -133,9 +132,9 @@ class SmartHomeSystem:
                 validate="key",
                 validatecommand=(self.editWin.register(validateEntry), "%P")
             )
-            consumptionRateSpinbox.grid(column=0, row=2)
+            consumptionRateSpinbox.grid(column=0, row=2, pady=(10, 0))
 
-            consumptionRateConfirmButton = ttk.Button(
+            consumptionRateConfirmButton = Button(
                 self.editWin,
                 text="Confirm",
                 command=lambda n=i: self.setPlugConsumption(i, consumptionRateSpinbox.get())
@@ -146,21 +145,21 @@ class SmartHomeSystem:
             optionValue = BooleanVar()
             optionValue.set(self.home.devices[i].getOption())
 
-            editLabel = ttk.Label(
+            editLabel = Label(
                 self.editWin,
                 text="Sleep Mode"
             )
             editLabel.grid(column=0, row=0, padx=60, pady=(10, 10))
 
-            trueButton = ttk.Radiobutton(
+            trueButton = Radiobutton(
                 self.editWin,
                 text="On",
                 variable=optionValue,
                 value=True
             )
-            trueButton.grid(column=0, row=2)
+            trueButton.grid(column=0, row=2, pady=(0, 5))
 
-            falseButton = ttk.Radiobutton(
+            falseButton = Radiobutton(
                 self.editWin,
                 text="Off",
                 variable=optionValue,
@@ -168,7 +167,7 @@ class SmartHomeSystem:
             )
             falseButton.grid(column=0, row=3)
 
-            editConfirmButton = ttk.Button(
+            editConfirmButton = Button(
                 self.editWin,
                 text="Confirm",
                 command=lambda n=i: self.setCustomDeviceOption(n, optionValue.get())
