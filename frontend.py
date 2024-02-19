@@ -192,6 +192,50 @@ class SmartHomeSystem:
 
     def addDeviceButtonClicked(self):
         self.addWin = Toplevel(self.win)
+        self.addWin.configure(bg="teal")
+
+        # Create lightbulb image and resize to button size.
+        plugImage = PhotoImage(file="images/plug.png")
+        plugImage = plugImage.subsample(plugImage.width() // 100, plugImage.height() // 100)
+
+        doorbellImage = PhotoImage(file="images/doorbell.png")
+        doorbellImage = doorbellImage.subsample(doorbellImage.width() // 100, doorbellImage.height() // 100)
+
+        addQuestionLabel = Label(
+            self.addWin,
+            text="Would you like to add a Smart Doorbell or a Smart Plug?"
+        )
+        addQuestionLabel.grid(row=0, column=1, columnspan=2, pady=10, padx=10)
+
+        addSmartPlug = Label(
+            self.addWin,
+            text="Smart Plug"
+        )
+        addSmartPlug.grid(column=1, row=1, pady=(10, 5), padx=10)
+
+        addSmartDoorbell = Label(
+            self.addWin,
+            text="Smart Doorbell"
+        )
+        addSmartDoorbell.grid(column=2, row=1, pady=(10, 5), padx=10)
+
+        plugButton = Button(
+            self.addWin,
+            image=plugImage,
+            width=100,
+            height=100
+        )
+        plugButton.image = plugImage  # Maintain reference to avoid python garbage collection.
+        plugButton.grid(column=1, row=2, padx=20, pady=(5, 5))
+
+        doorbellButton = Button(
+            self.addWin,
+            image=doorbellImage,
+            width=100,
+            height=100
+        )
+        doorbellButton.image = doorbellImage
+        doorbellButton.grid(column=2, row=2, padx=20, pady=(5, 5))
 
 
 def setUpHome():
