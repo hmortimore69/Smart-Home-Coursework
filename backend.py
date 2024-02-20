@@ -1,13 +1,18 @@
-class SmartPlug:
-    def __init__(self, consumptionRate):
+class SmartDevice:
+    def __init__(self):
         self.switchedOn = False
-        self.consumptionRate = consumptionRate
 
     def toggleSwitch(self):
         self.switchedOn = not self.switchedOn
 
     def getSwitchedOn(self) -> bool:
         return self.switchedOn
+
+
+class SmartPlug(SmartDevice):
+    def __init__(self, consumptionRate):
+        super().__init__()
+        self.consumptionRate = consumptionRate
 
     def getConsumptionRate(self) -> int:
         return self.consumptionRate
@@ -19,17 +24,10 @@ class SmartPlug:
         return f"------\nSmart Plug\n------\nSwitched On: {self.switchedOn}\nConsumption Rate: {self.consumptionRate}\n"
 
 
-# Custom Device Class
-class SmartDoorBell:
+class SmartDoorBell(SmartDevice):
     def __init__(self):
-        self.switchedOn = False
+        super().__init__()
         self.sleepMode = False
-
-    def toggleSwitch(self):
-        self.switchedOn = not self.switchedOn
-
-    def getSwitchedOn(self) -> bool:
-        return self.switchedOn
 
     def getOption(self) -> bool:
         return self.sleepMode
@@ -119,3 +117,8 @@ def testSmartHome():
     home.turnOnAll()
     print("!!TURNED ON ALL DEVICES!!")
     print(home)
+
+
+testSmartPlug()
+testSmartDoorBell()
+testSmartHome()
