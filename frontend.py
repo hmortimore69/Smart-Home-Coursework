@@ -4,6 +4,7 @@ from tkinter import *
 
 class SmartHomeSystem:
     def __init__(self, home):
+        self.consumptionRateWindow = None
         self.editWin = None
         self.addWin = None
 
@@ -192,7 +193,7 @@ class SmartHomeSystem:
 
     def addDeviceButtonClicked(self):
         self.addWin = Toplevel(self.win)
-        self.addWin.configure(bg="teal")
+        self.addWin.configure(bg="teal", padx=10, pady=10)
 
         # Create lightbulb image and resize to button size.
         plugImage = PhotoImage(file="images/plug.png")
@@ -205,7 +206,7 @@ class SmartHomeSystem:
             self.addWin,
             text="Would you like to add a Smart Doorbell or a Smart Plug?"
         )
-        addQuestionLabel.grid(row=0, column=1, columnspan=2, pady=10, padx=10)
+        addQuestionLabel.grid(row=0, column=1, columnspan=2)
 
         addSmartPlug = Label(
             self.addWin,
@@ -223,19 +224,64 @@ class SmartHomeSystem:
             self.addWin,
             image=plugImage,
             width=100,
-            height=100
+            height=100,
+            command=lambda: self.addSmartPlugConsumption()
         )
         plugButton.image = plugImage  # Maintain reference to avoid python garbage collection.
-        plugButton.grid(column=1, row=2, padx=20, pady=(5, 5))
+        plugButton.grid(column=1, row=2, padx=20, pady=(5, 0))
 
         doorbellButton = Button(
             self.addWin,
             image=doorbellImage,
             width=100,
-            height=100
+            height=100,
+            command=lambda: self.addSmartDoorbell()
         )
         doorbellButton.image = doorbellImage
-        doorbellButton.grid(column=2, row=2, padx=20, pady=(5, 5))
+        doorbellButton.grid(column=2, row=2, padx=20, pady=(5, 0))
+
+    def addSmartPlugConsumption(self):
+        consumptionRateLabel = Label(
+            self.addWin,
+            text="Set Consumption Rate"
+        )
+        consumptionRateLabel.grid(column=1, row=3, pady=(10, 0))
+
+        addConsumptionRateSpinbox = Spinbox(
+            self.addWin,
+            from_=0,
+            to=150,
+            increment=1,
+            width=3,
+            validate="key",
+            validatecommand=(self.addWin.register(validateEntry), "%P")
+        )
+        addConsumptionRateSpinbox.grid(column=1, row=5, pady=(10, 0))
+
+        consumptionRateConfirmButton = Button(
+            self.addWin,
+            text="Confirm",
+            command=lambda: self.confirmNewSmartPlug(
+                addConsumptionRateSpinbox,
+                consumptionRateLabel,
+                consumptionRateConfirmButton
+            )
+        )
+        consumptionRateConfirmButton.grid(column=1, row=6, padx=60, pady=(10, 0))
+
+    def confirmNewSmartPlug(self, consumptionRateSpinbox, consumptionRateLabel, consumptionRateConfirmButton):
+        consumptionRate = consumptionRateSpinbox.get()
+        self.home.addDevice(SmartPlug(consumptionRate))
+        self.updateWidgets()
+
+        # Destroy the labels and buttons
+        consumptionRateLabel.destroy()
+        consumptionRateSpinbox.destroy()
+        consumptionRateConfirmButton.destroy()
+
+    def addSmartDoorbell(self):
+        self.home.addDevice(SmartDoorBell())
+        self.updateWidgets()
 
 
 def setUpHome():
