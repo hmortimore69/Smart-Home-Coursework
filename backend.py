@@ -118,7 +118,3 @@ def testSmartHome():
     print("!!TURNED ON ALL DEVICES!!")
     print(home)
 
-
-testSmartPlug()
-testSmartDoorBell()
-testSmartHome()

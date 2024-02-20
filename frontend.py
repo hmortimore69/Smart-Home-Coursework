@@ -51,6 +51,18 @@ class SmartHomeSystem:
         )
         turnOffAllButton.grid(column=0, row=0, padx=(100, 10), pady=(0, 10))
 
+        saveDevices = Button(
+            self.mainFrame,
+            text="Save Devices"
+        )
+        saveDevices.grid(column=2, row=0)
+
+        loadDevices = Button(
+            self.mainFrame,
+            text="Load Devices"
+        )
+        loadDevices.grid(column=3, row=0)
+
         # Initialise the 5 devices
         for i, device in enumerate(self.devices):
             deviceStatus = "On" if device.getSwitchedOn() else "Off"
@@ -267,7 +279,7 @@ class SmartHomeSystem:
                 consumptionRateConfirmButton
             )
         )
-        consumptionRateConfirmButton.grid(column=1, row=6, padx=60, pady=(10, 0))
+        consumptionRateConfirmButton.grid(column=1, row=6, pady=(10, 0))
 
     def confirmNewSmartPlug(self, consumptionRateSpinbox, consumptionRateLabel, consumptionRateConfirmButton):
         consumptionRate = consumptionRateSpinbox.get()
