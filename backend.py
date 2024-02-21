@@ -21,7 +21,12 @@ class SmartPlug(SmartDevice):
         self.consumptionRate = rate
 
     def __str__(self) -> str:
-        return f"------\nSmart Plug\n------\nSwitched On: {self.switchedOn}\nConsumption Rate: {self.consumptionRate}\n"
+        return f'''------
+        Smart Plug
+        ------
+        Switched On: {self.switchedOn}
+        Consumption Rate: {self.consumptionRate}
+        '''
 
 
 class SmartDoorBell(SmartDevice):
@@ -36,7 +41,12 @@ class SmartDoorBell(SmartDevice):
         self.sleepMode = bool(option)
 
     def __str__(self) -> str:
-        return f"------\nSmart Doorbell\n------\nSwitched On: {self.switchedOn}\nSleep Mode: {self.sleepMode}\n"
+        return f'''------
+        Smart Doorbell
+        ------
+        Switched On: {self.switchedOn}
+        Sleep Mode: {self.sleepMode}
+        '''
 
 
 class SmartHome:

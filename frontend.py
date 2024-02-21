@@ -1,5 +1,6 @@
 from backend import *
 from tkinter import *
+from tkinter import filedialog
 
 
 class SmartHomeSystem:
@@ -9,7 +10,6 @@ class SmartHomeSystem:
         self.addWin = None
 
         self.home = home
-        self.devices = home.getDevices()
 
         self.backgroundColour = "teal"
 
@@ -34,8 +34,6 @@ class SmartHomeSystem:
         self.createWidgets()
 
     def createWidgets(self):
-        self.devices = self.home.getDevices()
-
         turnOnAllButton = Button(
             self.mainFrame,
             text="Turn On All",
@@ -53,18 +51,20 @@ class SmartHomeSystem:
 
         saveDevices = Button(
             self.mainFrame,
-            text="Save Devices"
+            text="Save Devices",
+            command=lambda: self.saveDeviceList()
         )
-        saveDevices.grid(column=2, row=0)
+        saveDevices.grid(column=2, row=0, padx=(10, 0), pady=(0, 10))
 
         loadDevices = Button(
             self.mainFrame,
-            text="Load Devices"
+            text="Load Devices",
+            command=lambda: self.loadDeviceList()
         )
-        loadDevices.grid(column=3, row=0)
+        loadDevices.grid(column=3, row=0, padx=(10, 0), pady=(0, 10))
 
         # Initialise the 5 devices
-        for i, device in enumerate(self.devices):
+        for i, device in enumerate(self.home.getDevices()):
             deviceStatus = "On" if device.getSwitchedOn() else "Off"
 
             if isinstance(device, SmartPlug):
@@ -109,7 +109,7 @@ class SmartHomeSystem:
             text="Add Device",
             command=self.addDeviceButtonClicked
         )
-        addDevice.grid(column=0, row=len(self.devices)+1, pady=(10, 0))
+        addDevice.grid(column=0, row=len(self.home.getDevices())+1, pady=(10, 0))
 
     def turnOnAllButtonClicked(self):
         self.home.turnOnAll()
@@ -127,9 +127,9 @@ class SmartHomeSystem:
         self.editWin = Toplevel(self.win)
         self.editWin.configure(bg="teal")
 
-        if isinstance(self.devices[i], SmartPlug):
+        if isinstance(self.home.getDevices()[i], SmartPlug):
             consumptionRateVar = StringVar()
-            consumptionRateVar.set(str(self.devices[i].getConsumptionRate()))
+            consumptionRateVar.set(str(self.home.getDevices()[i].getConsumptionRate()))
 
             editLabel = Label(
                 self.editWin,
@@ -207,7 +207,7 @@ class SmartHomeSystem:
         self.addWin = Toplevel(self.win)
         self.addWin.configure(bg="teal", padx=10, pady=10)
 
-        # Create lightbulb image and resize to button size.
+        # Create light bulb image and resize to button size.
         plugImage = PhotoImage(file="images/plug.png")
         plugImage = plugImage.subsample(plugImage.width() // 100, plugImage.height() // 100)
 
@@ -294,6 +294,55 @@ class SmartHomeSystem:
     def addSmartDoorbell(self):
         self.home.addDevice(SmartDoorBell())
         self.updateWidgets()
+
+    def saveDeviceList(self):
+        fileSaveLocation = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            parent=self.win,
+        )
+
+        try:
+            with open(fileSaveLocation, "w") as file:
+                devicesToSave = []
+
+                for device in self.home.getDevices():
+                    if isinstance(device, SmartPlug):
+                        devicesToSave.append(["Plug", device.getSwitchedOn(), device.getConsumptionRate()])
+                    else:
+                        devicesToSave.append(["Doorbell", device.getSwitchedOn(), device.getOption()])
+
+                for row in devicesToSave:
+                    rowDevice = ','.join(map(str, row))
+                    file.write(rowDevice + '\n')
+
+        except PermissionError:
+            return
+
+    def loadDeviceList(self):
+        fileLoadLocation = filedialog.askopenfilename(
+            defaultextension=".csv",
+            parent=self.win
+        )
+
+        with open(fileLoadLocation, "r") as file:
+            devicesToLoad = []
+
+            for line in file:
+                row = line.strip().split(',')
+                devicesToLoad.append(row)
+
+        if devicesToLoad:
+            for originalDeviceIndex in range(len(self.home.devices) - 1):
+                self.home.devices.removeDevice(originalDeviceIndex)
+
+            for i, device in enumerate(devicesToLoad):
+                if device[0] == "Plug":
+                    self.home.devices.addDevice(SmartPlug(device[2]))
+                    if device[2]:
+                        self.home.devices[i].toggleSwitch()
+                else:
+                    self.home.devices.addDevice(SmartDoorBell())
+                    if device[]
 
 
 def setUpHome():
