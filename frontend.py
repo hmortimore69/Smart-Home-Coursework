@@ -385,7 +385,7 @@ class SmartHomeSystem:
                 self.updateWidgets()
 
         except FileNotFoundError:
-            messagebox.showinfo("Uh Oh!", "File not found. Please select a valid device file.")
+            return
 
 
 def setUpHome():
