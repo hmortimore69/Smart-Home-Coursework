@@ -1,6 +1,7 @@
 from backend import *
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
 
 
 class SmartHomeSystem:
@@ -72,7 +73,7 @@ class SmartHomeSystem:
                     self.mainFrame,
                     text=f"Smart Plug: {deviceStatus}, Consumption Rate: {device.getConsumptionRate()}"
                 )
-                deviceLabel.grid(column=0, row=i+1, sticky="w")
+                deviceLabel.grid(column=0, row=i + 1, sticky="w")
 
             else:
                 deviceOption = "On" if device.getOption() else "Off"
@@ -81,35 +82,35 @@ class SmartHomeSystem:
                     self.mainFrame,
                     text=f"Smart Doorbell: {deviceStatus}, Sleep Mode: {deviceOption}"
                 )
-                deviceLabel.grid(column=0, row=i+1, sticky="w")
+                deviceLabel.grid(column=0, row=i + 1, sticky="w")
 
             togglePower = Button(
                 self.mainFrame,
                 text="Toggle Power",
                 command=lambda n=i: self.toggleSwitchButtonClicked(n)
             )
-            togglePower.grid(column=1, row=i+1, padx=(10, 0))
+            togglePower.grid(column=1, row=i + 1, padx=(10, 0))
 
             editOption = Button(
                 self.mainFrame,
                 text="Edit Device",
                 command=lambda n=i: self.editDeviceButtonClicked(n)
             )
-            editOption.grid(column=2, row=i+1, padx=(10, 0))
+            editOption.grid(column=2, row=i + 1, padx=(10, 0))
 
             removeDevice = Button(
                 self.mainFrame,
                 text="Delete Device",
                 command=lambda n=i: self.deleteDeviceButtonClicked(n)
             )
-            removeDevice.grid(column=3, row=i+1, padx=(10, 0))
+            removeDevice.grid(column=3, row=i + 1, padx=(10, 0))
 
         addDevice = Button(
             self.mainFrame,
             text="Add Device",
             command=self.addDeviceButtonClicked
         )
-        addDevice.grid(column=0, row=len(self.home.getDevices())+1, pady=(10, 0))
+        addDevice.grid(column=0, row=len(self.home.getDevices()) + 1, pady=(10, 0))
 
     def turnOnAllButtonClicked(self):
         self.home.turnOnAll()
@@ -299,6 +300,7 @@ class SmartHomeSystem:
         fileSaveLocation = filedialog.asksaveasfilename(
             defaultextension=".csv",
             parent=self.win,
+            filetypes=[('CSV Files', '*.csv')]
         )
 
         try:
@@ -316,33 +318,73 @@ class SmartHomeSystem:
                     file.write(rowDevice + '\n')
 
         except PermissionError:
+            messagebox.showinfo("Uh Oh!", "File already in use.")
+
+        except FileNotFoundError:
             return
 
     def loadDeviceList(self):
-        self.home.devices = []
         fileLoadLocation = filedialog.askopenfilename(
             defaultextension=".csv",
-            parent=self.win
+            parent=self.win,
+            filetypes=[('CSV Files', '*.csv')]
         )
 
-        with open(fileLoadLocation, "r") as file:
-            devicesToLoad = [line.strip().split(',') for line in file]
+        try:
+            with open(fileLoadLocation, "r") as file:
+                devicesToLoad = [line.strip().split(',') for line in file]
 
-        if devicesToLoad:
-            for i, device in enumerate(self.home.devices):
-                self.home.removeDevice(i)
+            if devicesToLoad == [['']]:
+                messagebox.showinfo("Uh Oh!", "Empty File. Please select a valid device file.")
+            else:
+                tempNewDevices = []
 
-            for i, device in enumerate(devicesToLoad):
-                if device[0] == "Plug":
-                    self.home.addDevice(SmartPlug(device[2]))
-                    if device[2]:
-                        self.home.devices[i].toggleSwitch()
-                else:
-                    self.home.addDevice(SmartDoorBell())
-                    if device[2]:
-                        self.home.devices[i].setOption(True)
+                for i, device in enumerate(devicesToLoad):
+                    if len(device) != 3:
+                        messagebox.showinfo(
+                            "Uh Oh!",
+                            f"Invalid entry at line {i + 1}. Each record must have 3 columns."
+                        )
+                        break
 
-        self.updateWidgets()
+                    deviceClass = device[0].strip()
+                    option1 = device[1].strip().lower()
+                    option2 = device[2].strip().lower()
+
+                    if deviceClass == "Plug" and option1 in ["true", "false"] and option2 in ["true", "false"]:
+                        newDevice = SmartPlug(option2)
+                        tempNewDevices.append(newDevice)
+
+                        if option1 == "true":
+                            newDevice.toggleSwitch()
+
+                    elif deviceClass == "Doorbell" and option1 in ["true", "false"] and option2 in ["true", "false"]:
+                        newDevice = SmartDoorBell()
+                        tempNewDevices.append(newDevice)
+
+                        if option1 == "true":
+                            newDevice.toggleSwitch()
+
+                        if option2 == "true":
+                            newDevice.setOption(True)
+
+                    else:
+                        messagebox.showinfo(
+                            "Uh Oh!",
+                            f"Invalid entry at line {i + 1}. Please check the format of your entries."
+                        )
+                        break
+
+                else:  # Only entered if the for loop is NOT broken out of.
+                    self.home.devices = []
+
+                    for device in tempNewDevices:
+                        self.home.addDevice(device)
+
+                self.updateWidgets()
+
+        except FileNotFoundError:
+            messagebox.showinfo("Uh Oh!", "File not found. Please select a valid device file.")
 
 
 def setUpHome():
