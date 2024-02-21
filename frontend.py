@@ -336,6 +336,7 @@ class SmartHomeSystem:
 
             if devicesToLoad == [['']]:
                 messagebox.showinfo("Uh Oh!", "Empty File. Please select a valid device file.")
+
             else:
                 tempNewDevices = []
 
