@@ -319,30 +319,30 @@ class SmartHomeSystem:
             return
 
     def loadDeviceList(self):
+        self.home.devices = []
         fileLoadLocation = filedialog.askopenfilename(
             defaultextension=".csv",
             parent=self.win
         )
 
         with open(fileLoadLocation, "r") as file:
-            devicesToLoad = []
-
-            for line in file:
-                row = line.strip().split(',')
-                devicesToLoad.append(row)
+            devicesToLoad = [line.strip().split(',') for line in file]
 
         if devicesToLoad:
-            for originalDeviceIndex in range(len(self.home.devices) - 1):
-                self.home.devices.removeDevice(originalDeviceIndex)
+            for i, device in enumerate(self.home.devices):
+                self.home.removeDevice(i)
 
             for i, device in enumerate(devicesToLoad):
                 if device[0] == "Plug":
-                    self.home.devices.addDevice(SmartPlug(device[2]))
+                    self.home.addDevice(SmartPlug(device[2]))
                     if device[2]:
                         self.home.devices[i].toggleSwitch()
                 else:
-                    self.home.devices.addDevice(SmartDoorBell())
-                    if device[]
+                    self.home.addDevice(SmartDoorBell())
+                    if device[2]:
+                        self.home.devices[i].setOption(True)
+
+        self.updateWidgets()
 
 
 def setUpHome():
