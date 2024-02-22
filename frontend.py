@@ -303,6 +303,7 @@ class SmartHomeSystem:
             filetypes=[('CSV Files', '*.csv')]
         )
 
+        # Used try and except on saving due to if the file is open, then you will get an error if you try to overwrite.
         try:
             with open(fileSaveLocation, "w") as file:
                 devicesToSave = []
@@ -317,10 +318,10 @@ class SmartHomeSystem:
                     rowDevice = ','.join(map(str, row))
                     file.write(rowDevice + '\n')
 
-        except PermissionError:
+        except PermissionError:  # Only appears when trying to overwrite an open file.
             messagebox.showinfo("Uh Oh!", "The selected file is currently in use by an application.")
 
-        except FileNotFoundError:
+        except FileNotFoundError:  # Take a guess
             return
 
     def loadDeviceList(self):
@@ -330,62 +331,60 @@ class SmartHomeSystem:
             filetypes=[('CSV Files', '*.csv')]
         )
 
-        try:
-            with open(fileLoadLocation, "r") as file:
-                devicesToLoad = [line.strip().split(',') for line in file]
-
-            if devicesToLoad == [['']]:
-                messagebox.showinfo("Uh Oh!", "Empty File. Please select a valid device file.")
-
-            else:
-                tempNewDevices = []
-
-                for i, device in enumerate(devicesToLoad):
-                    if len(device) != 3:
-                        messagebox.showinfo(
-                            "Uh Oh!",
-                            f"Invalid entry at line {i + 1}. Each record must have 3 columns."
-                        )
-                        break
-
-                    deviceClass = device[0].strip()
-                    option1 = device[1].strip().lower()
-                    option2 = device[2].strip().lower()
-
-                    if deviceClass == "Plug" and option1 in ["true", "false"] and option2.isdigit():
-                        newDevice = SmartPlug(option2)
-                        tempNewDevices.append(newDevice)
-
-                        if option1 == "true":
-                            newDevice.toggleSwitch()
-
-                    elif deviceClass == "Doorbell" and option1 in ["true", "false"] and option2 in ["true", "false"]:
-                        newDevice = SmartDoorBell()
-                        tempNewDevices.append(newDevice)
-
-                        if option1 == "true":
-                            newDevice.toggleSwitch()
-
-                        if option2 == "true":
-                            newDevice.setOption(True)
-
-                    else:
-                        messagebox.showinfo(
-                            "Uh Oh!",
-                            f"Invalid entry at line {i + 1}. Please check the format of your entries."
-                        )
-                        break
-
-                else:  # Only entered if the for loop is NOT broken out of.
-                    self.home.devices = []
-
-                    for device in tempNewDevices:
-                        self.home.addDevice(device)
-
-                self.updateWidgets()
-
-        except FileNotFoundError:
+        if not fileLoadLocation:
             return
+
+        with open(fileLoadLocation, "r") as file:
+            devicesToLoad = [line.strip().split(',') for line in file]
+
+        if devicesToLoad == [['']]:
+            messagebox.showinfo("Uh Oh!", "Empty File. Please select a valid device file.")
+
+        else:
+            tempNewDevices = []
+
+            for i, device in enumerate(devicesToLoad):
+                if len(device) != 3:
+                    messagebox.showinfo(
+                       "Uh Oh!",
+                       f"Invalid entry at line {i + 1}. Each record must have 3 columns."
+                    )
+                    break
+                deviceClass = device[0].strip()
+                option1 = device[1].strip().lower()
+                option2 = device[2].strip().lower()
+
+                if deviceClass == "Plug" and option1 in ["true", "false"] and option2.isdigit():
+                    newDevice = SmartPlug(option2)
+                    tempNewDevices.append(newDevice)
+
+                    if option1 == "true":
+                        newDevice.toggleSwitch()
+
+                elif deviceClass == "Doorbell" and option1 in ["true", "false"] and option2 in ["true", "false"]:
+                    newDevice = SmartDoorBell()
+                    tempNewDevices.append(newDevice)
+
+                    if option1 == "true":
+                        newDevice.toggleSwitch()
+
+                    if option2 == "true":
+                        newDevice.setOption(True)
+
+                else:
+                    messagebox.showinfo(
+                        "Uh Oh!",
+                        f"Invalid entry at line {i + 1}. Please check the format of your entries."
+                    )
+                    break
+
+            else:  # Only entered if the for loop is NOT broken out of.
+                self.home.devices = []
+
+                for device in tempNewDevices:
+                    self.home.addDevice(device)
+
+            self.updateWidgets()
 
 
 def setUpHome():
