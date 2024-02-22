@@ -303,6 +303,9 @@ class SmartHomeSystem:
             filetypes=[('CSV Files', '*.csv')]
         )
 
+        if not fileSaveLocation:
+            return
+
         # Used try and except on saving due to if the file is open, then you will get an error if you try to overwrite.
         try:
             with open(fileSaveLocation, "w") as file:
@@ -320,9 +323,6 @@ class SmartHomeSystem:
 
         except PermissionError:  # Only appears when trying to overwrite an open file.
             messagebox.showinfo("Uh Oh!", "The selected file is currently in use by an application.")
-
-        except FileNotFoundError:  # Take a guess
-            return
 
     def loadDeviceList(self):
         fileLoadLocation = filedialog.askopenfilename(
