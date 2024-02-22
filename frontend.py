@@ -318,7 +318,7 @@ class SmartHomeSystem:
                     file.write(rowDevice + '\n')
 
         except PermissionError:
-            messagebox.showinfo("Uh Oh!", "File already in use.")
+            messagebox.showinfo("Uh Oh!", "The selected file is currently in use by an application.")
 
         except FileNotFoundError:
             return
@@ -352,7 +352,7 @@ class SmartHomeSystem:
                     option1 = device[1].strip().lower()
                     option2 = device[2].strip().lower()
 
-                    if deviceClass == "Plug" and option1 in ["true", "false"] and option2 in ["true", "false"]:
+                    if deviceClass == "Plug" and option1 in ["true", "false"] and option2.isdigit():
                         newDevice = SmartPlug(option2)
                         tempNewDevices.append(newDevice)
 
