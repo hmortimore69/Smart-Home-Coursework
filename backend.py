@@ -127,4 +127,3 @@ def testSmartHome():
     home.turnOnAll()
     print("!!TURNED ON ALL DEVICES!!")
     print(home)
-
