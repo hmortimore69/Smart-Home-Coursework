@@ -130,7 +130,7 @@ class SmartHomeSystem:
 
         if isinstance(self.home.get_devices()[i], SmartPlug):
             consumption_rate_var = StringVar()
-            consumption_rate_var.set(str(self.home.get_devices()[i].getConsumptionRate()))
+            consumption_rate_var.set(str(self.home.get_devices()[i].get_consumption_rate()))
 
             edit_label = Label(
                 self.edit_win,
