@@ -1,12 +1,12 @@
 class SmartDevice:
     def __init__(self):
-        self.switchedOn = False
+        self.switched_on = False
 
     def toggle_switch(self):
-        self.switchedOn = not self.switchedOn
+        self.switched_on = not self.switched_on
 
     def get_switched_on(self) -> bool:
-        return self.switchedOn
+        return self.switched_on
 
 
 class SmartPlug(SmartDevice):
@@ -24,7 +24,7 @@ class SmartPlug(SmartDevice):
         return f'''------
         Smart Plug
         ------
-        Switched On: {self.switchedOn}
+        Switched On: {self.switched_on}
         Consumption Rate: {self.consumption_rate}
         '''
 
@@ -44,7 +44,7 @@ class SmartDoorBell(SmartDevice):
         return f'''------
         Smart Doorbell
         ------
-        Switched On: {self.switchedOn}
+        Switched On: {self.switched_on}
         Sleep Mode: {self.sleepMode}
         '''
 
