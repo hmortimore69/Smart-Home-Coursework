@@ -64,7 +64,7 @@ class SmartHome:
     def remove_device(self, i):
         self.devices.pop(i)
 
-    def toggle_switch(self, i):
+    def toggle_switch_at_index(self, i):
         self.devices[i].toggle_switch()
 
     def turn_on_all(self):

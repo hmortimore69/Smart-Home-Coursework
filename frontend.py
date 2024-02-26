@@ -8,10 +8,11 @@ class SmartHomeSystem:
     def __init__(self, home):
         self.home = home
 
-        # Initialise all windows and frames needed for future assignment
+        # Initialise all objects needed for future assignment and manipulation
         self.consumption_rate_window = None
         self.edit_win = None
         self.add_win = None
+        self.clock_label = None
 
         self.win = Tk()
         self.win.title("Smart Home System")
@@ -28,6 +29,7 @@ class SmartHomeSystem:
 
     def run(self):
         self.create_widgets()
+        # self.update_clock("0")
         self.win.mainloop()
 
     def update_widgets(self):
@@ -36,6 +38,17 @@ class SmartHomeSystem:
             child.destroy()
 
         self.create_widgets()
+
+    def update_clock(self, time):
+        if time == "24":
+            time = "0"
+        else:
+            time = str(int(time) + 1)
+
+        new_time = f"{str(time).zfill(2)}:00"
+
+        self.clock_label.config(text=new_time)
+        self.win.after(3000, self.update_clock(time))
 
     def create_widgets(self):
         turn_on_all_button = Button(
@@ -66,6 +79,11 @@ class SmartHomeSystem:
             command=lambda: self.load_device_list()
         )
         load_devices.grid(column=3, row=0, padx=(10, 0), pady=(0, 10))
+
+        self.clock_label = Label(
+            self.main_frame,
+            text="00:00",
+        )
 
         # Initialise the 5 devices
         for i, device in enumerate(self.home.get_devices()):
@@ -124,7 +142,7 @@ class SmartHomeSystem:
         self.update_widgets()
 
     def toggle_switch_button_clicked(self, i):
-        self.home.toggle_switch(i)
+        self.home.toggle_switch_at_index(i)
         self.update_widgets()
 
     def edit_device_button_clicked(self, i):
