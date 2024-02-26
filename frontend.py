@@ -322,7 +322,10 @@ class SmartHomeSystem:
                     file.write(row_device + '\n')
 
         except PermissionError:  # Only appears when trying to overwrite an open file.
-            messagebox.showinfo("Uh Oh!", "The selected file is currently in use by an application.")
+            messagebox.showinfo(
+                "Uh Oh! D:",
+                "The selected file is currently in use by an application."
+            )
 
     def load_device_list(self):
         file_load_location = filedialog.askopenfilename(
@@ -338,7 +341,10 @@ class SmartHomeSystem:
             devices_to_load = [line.strip().split(',') for line in file]
 
         if devices_to_load == [['']]:
-            messagebox.showinfo("Uh Oh!", "Empty File. Please select a valid device file.")
+            messagebox.showinfo(
+                "Uh Oh! D:",
+                "Empty File. Please select a valid device file."
+            )
 
         else:
             temp_new_devices = []
@@ -346,7 +352,7 @@ class SmartHomeSystem:
             for i, device in enumerate(devices_to_load):
                 if len(device) != 3:
                     messagebox.showinfo(
-                       "Uh Oh!",
+                       "Uh Oh! D:",
                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
@@ -390,7 +396,10 @@ class SmartHomeSystem:
 def setup_home():
     home = SmartHome()
 
-    print("Available Device Types:\n[0] - Smart Plug\n[1] - Smart Doorbell\nAdd 5 devices by referencing their index.")
+    print('''Available Device Types:
+    [0] - Smart Plug
+    [1] - Smart Doorbell
+    Add 5 devices by referencing their index.''')
 
     for counter in range(5):
         index = input("Please enter the index of the device you'd like to add: ")

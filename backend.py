@@ -25,8 +25,7 @@ class SmartPlug(SmartDevice):
         Smart Plug
         ------
         Switched On: {self.switched_on}
-        Consumption Rate: {self.consumption_rate}
-        '''
+        Consumption Rate: {self.consumption_rate}'''
 
 
 class SmartDoorBell(SmartDevice):
@@ -66,15 +65,15 @@ class SmartHome:
         self.devices.pop(i)
 
     def toggle_switch(self, i):
-        self.devices[i].toggleSwitch()
+        self.devices[i].toggle_switch()
 
     def turn_on_all(self):
         for device in self.devices:
-            device.switchedOn = True
+            device.switched_on = True
 
     def turn_off_all(self):
         for device in self.devices:
-            device.switchedOn = False
+            device.switched_on = False
 
     def __str__(self):
         return_string = ""
