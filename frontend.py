@@ -6,13 +6,12 @@ from tkinter import messagebox
 
 class SmartHomeSystem:
     def __init__(self, home):
+        self.home = home
+
+        # Initialise all windows and frames needed for future assignment
         self.consumption_rate_window = None
         self.edit_win = None
         self.add_win = None
-
-        self.home = home
-
-        self.background_colour = "teal"
 
         self.win = Tk()
         self.win.title("Smart Home System")
@@ -20,6 +19,10 @@ class SmartHomeSystem:
         self.main_frame = Frame(self.win)
         self.main_frame.grid(column=0, row=0, padx=10, pady=10)
 
+        # Initial colouring and styling
+        self.background_colour = "teal"
+
+        # Assign default styling
         self.win.configure(bg=self.background_colour)
         self.main_frame.configure(bg=self.background_colour)
 
@@ -143,7 +146,7 @@ class SmartHomeSystem:
                 from_=0,
                 to=150,
                 increment=1,
-                width=3,
+                width=4,
                 textvariable=consumption_rate_var,
                 validate="key",
                 validatecommand=(self.edit_win.register(validate_entry), "%P")
@@ -196,7 +199,7 @@ class SmartHomeSystem:
         self.update_widgets()
 
     def set_plug_consumption(self, i, value):
-        self.home.devices[i].setConsumptionRate(value)
+        self.home.devices[i].set_consumption_rate(value)
         self.edit_win.destroy()
         self.update_widgets()
 
@@ -265,7 +268,7 @@ class SmartHomeSystem:
             from_=0,
             to=150,
             increment=1,
-            width=3,
+            width=4,
             validate="key",
             validatecommand=(self.add_win.register(validate_entry), "%P")
         )
@@ -287,7 +290,6 @@ class SmartHomeSystem:
         self.home.add_device(SmartPlug(consumption_rate))
         self.update_widgets()
 
-        # Destroy the labels and buttons
         consumption_rate_label.destroy()
         consumption_rate_spinbox.destroy()
         consumption_rate_confirm_button.destroy()
@@ -356,6 +358,7 @@ class SmartHomeSystem:
                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
+                    
                 device_class = device[0].strip()
                 option1 = device[1].strip().lower()
                 option2 = device[2].strip().lower()
