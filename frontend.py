@@ -29,26 +29,34 @@ class SmartHomeSystem:
 
     def run(self):
         self.create_widgets()
-        # self.update_clock("0")
+
+        self.clock_label = Label(
+            self.main_frame,
+            text="00:00",
+        )
+        self.clock_label.grid(column=1, row=0)
+
+        self.clock_label.after(3000, self.update_clock)
         self.win.mainloop()
 
     def update_widgets(self):
         # Clear the mainFrame
         for child in self.main_frame.winfo_children():
-            child.destroy()
+            if child != self.clock_label:
+                child.destroy()
 
         self.create_widgets()
 
-    def update_clock(self, time):
-        if time == "24":
-            time = "0"
-        else:
-            time = str(int(time) + 1)
+    def update_clock(self):
+        time = self.clock_label.cget("text")[:2]
+
+        # If time hits 23, reset it to 0. Otherwise, increment.
+        time = "0" if time == "23" else str(int(time) + 1)
 
         new_time = f"{str(time).zfill(2)}:00"
 
         self.clock_label.config(text=new_time)
-        self.win.after(3000, self.update_clock(time))
+        self.win.after(3000, self.update_clock)
 
     def create_widgets(self):
         turn_on_all_button = Button(
@@ -79,11 +87,6 @@ class SmartHomeSystem:
             command=lambda: self.load_device_list()
         )
         load_devices.grid(column=3, row=0, padx=(10, 0), pady=(0, 10))
-
-        self.clock_label = Label(
-            self.main_frame,
-            text="00:00",
-        )
 
         # Initialise the 5 devices
         for i, device in enumerate(self.home.get_devices()):
