@@ -380,7 +380,8 @@ class SmartHomeSystem:
                 option1 = device[1].strip().lower()
                 option2 = device[2].strip().lower()
 
-                if device_class == "Plug" and option1 in ["true", "false"] and option2.isdigit():
+                if device_class == "Plug" and option1 in ["true", "false"] and option2.isdigit() and 0 <= int(
+                        option2) <= 150:
                     new_device = SmartPlug(option2)
                     temp_new_devices.append(new_device)
 
