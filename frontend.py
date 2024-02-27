@@ -48,10 +48,10 @@ class SmartHomeSystem:
         self.create_widgets()
 
     def update_clock(self):
-        curr_time = self.clock_label.cget("text")[5:-3]
-        new_time = f"{"0" if curr_time == "23" else str(int(curr_time) + 1).zfill(2)}:00"
+        time = self.clock_label.cget("text")[6:-3]
+        time = f"{"0" if time == "23" else str(int(time) + 1).zfill(2)}:00"
 
-        self.clock_label.config(text=f"Time: {new_time}")
+        self.clock_label.config(text=f"Time: {time}")
         self.win.after(3000, self.update_clock)
 
     def create_widgets(self):
