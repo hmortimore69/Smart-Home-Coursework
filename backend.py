@@ -22,10 +22,10 @@ class SmartPlug(SmartDevice):
 
     def __str__(self) -> str:
         return f'''------
-        Smart Plug
-        ------
-        Switched On: {self.switched_on}
-        Consumption Rate: {self.consumption_rate}'''
+Smart Plug
+------
+Switched On: {self.switched_on}
+Consumption Rate: {self.consumption_rate}'''
 
 
 class SmartDoorBell(SmartDevice):
@@ -41,11 +41,11 @@ class SmartDoorBell(SmartDevice):
 
     def __str__(self) -> str:
         return f'''------
-        Smart Doorbell
-        ------
-        Switched On: {self.switched_on}
-        Sleep Mode: {self.sleepMode}
-        '''
+Smart Doorbell
+------
+Switched On: {self.switched_on}
+Sleep Mode: {self.sleepMode}
+'''
 
 
 class SmartHome:
@@ -120,7 +120,7 @@ def test_smart_home():
     home.add_device(plug_two)
     home.add_device(doorbell)
 
-    home.toggle_switch(1)
+    home.toggle_switch_at_index(1)
     print(home)
 
     home.turn_on_all()

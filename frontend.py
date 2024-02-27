@@ -32,9 +32,9 @@ class SmartHomeSystem:
 
         self.clock_label = Label(
             self.main_frame,
-            text="00:00",
+            text="Time: 00:00",
         )
-        self.clock_label.grid(column=1, row=0)
+        self.clock_label.grid(column=1, row=0, pady=(0, 10))
 
         self.clock_label.after(3000, self.update_clock)
         self.win.mainloop()
@@ -48,14 +48,10 @@ class SmartHomeSystem:
         self.create_widgets()
 
     def update_clock(self):
-        time = self.clock_label.cget("text")[:2]
+        curr_time = self.clock_label.cget("text")[5:-3]
+        new_time = f"{"0" if curr_time == "23" else str(int(curr_time) + 1).zfill(2)}:00"
 
-        # If time hits 23, reset it to 0. Otherwise, increment.
-        time = "0" if time == "23" else str(int(time) + 1)
-
-        new_time = f"{str(time).zfill(2)}:00"
-
-        self.clock_label.config(text=new_time)
+        self.clock_label.config(text=f"Time: {new_time}")
         self.win.after(3000, self.update_clock)
 
     def create_widgets(self):
@@ -423,7 +419,7 @@ def setup_home():
     print('''Available Device Types:
     [0] - Smart Plug
     [1] - Smart Doorbell
-    Add 5 devices by referencing their index.''')
+Add 5 devices by referencing their index.''')
 
     for counter in range(5):
         index = input("Please enter the index of the device you'd like to add: ")
