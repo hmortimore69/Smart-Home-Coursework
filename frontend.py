@@ -342,8 +342,8 @@ class SmartHomeSystem:
 
         except PermissionError:  # Only appears when trying to overwrite an open file.
             messagebox.showinfo(
-                "Uh Oh! D:",
-                "The selected file is currently in use by an application."
+                "Uh Oh! :(",
+                "The selected file is currently in use by another application."
             )
 
     def load_device_list(self):
@@ -361,7 +361,7 @@ class SmartHomeSystem:
 
         if devices_to_load == [['']]:
             messagebox.showinfo(
-                "Uh Oh! D:",
+                "Uh Oh! :(",
                 "Empty File. Please select a valid device file."
             )
 
@@ -371,7 +371,7 @@ class SmartHomeSystem:
             for i, device in enumerate(devices_to_load):
                 if len(device) != 3:
                     messagebox.showinfo(
-                       "Uh Oh! D:",
+                       "Uh Oh! :(",
                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
@@ -400,7 +400,7 @@ class SmartHomeSystem:
 
                 else:
                     messagebox.showinfo(
-                        "Uh Oh!",
+                        "Uh Oh! :(",
                         f"Invalid entry at line {i + 1}. Please check the format of your entries."
                     )
                     break
@@ -426,7 +426,7 @@ Add 5 devices by referencing their index.''')
         index = input("Please enter the index of the device you'd like to add: ")
 
         while index not in ["0", "1"]:
-            print("Invalid argument. Please enter a valid catalog index.")
+            print("Invalid argument. Please enter a valid catalogue index.")
             index = input("Please enter the index of the device you'd like to add: ")
 
         if index == "0":
