@@ -14,6 +14,7 @@ class SmartHomeSystem:
         self.edit_win = None
         self.add_win = None
         self.clock_label = None
+        self.device_schedule = []
 
         self.win = Tk()
         self.win.title("Smart Home System")
@@ -125,16 +126,15 @@ class SmartHomeSystem:
                 curr_col = 0
 
             if isinstance(device, SmartPlug):
-                plug_button = Button(
+                plug_label = Label(
                     self.create_widget_frame,
                     image=self.plug_image,
                     width=100,
                     height=100,
-                    command=lambda: self.add_plug_consumption()
                 )
-                plug_button.image = self.plug_image  # Maintain reference to avoid python garbage collection.
-                plug_button.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
-                plug_button.configure(bg=self.image_accent_colour)
+                plug_label.image = self.plug_image  # Maintain reference to avoid python garbage collection.
+                plug_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
+                plug_label.configure(bg=self.image_accent_colour)
 
                 device_label = Label(
                     self.create_widget_frame,
@@ -146,16 +146,15 @@ class SmartHomeSystem:
             else:
                 device_option = "On" if device.get_option() else "Off"
 
-                doorbell_button = Button(
+                doorbell_label = Label(
                     self.create_widget_frame,
                     image=self.doorbell_image,
                     width=100,
                     height=100,
-                    command=lambda: self.add_doorbell()
                 )
-                doorbell_button.image = self.doorbell_image
-                doorbell_button.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 2))
-                doorbell_button.configure(bg=self.image_accent_colour)
+                doorbell_label.image = self.doorbell_image
+                doorbell_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 2))
+                doorbell_label.configure(bg=self.image_accent_colour)
 
                 device_label = Label(
                     self.create_widget_frame,
@@ -201,7 +200,7 @@ class SmartHomeSystem:
 
     def edit_device_button_clicked(self, i):
         self.edit_win = Toplevel(self.win)
-        self.edit_win.configure(bg="teal")
+        self.edit_win.configure(bg=self.background_colour)
 
         if isinstance(self.home.get_devices()[i], SmartPlug):
             consumption_rate_var = StringVar()
@@ -281,7 +280,7 @@ class SmartHomeSystem:
 
     def add_device_button_clicked(self):
         self.add_win = Toplevel(self.win)
-        self.add_win.configure(bg="teal", padx=10, pady=10)
+        self.add_win.configure(bg=self.background_colour, padx=10, pady=10)
 
         add_question_label = Label(
             self.add_win,
@@ -381,6 +380,7 @@ class SmartHomeSystem:
                 for device in self.home.get_devices():
                     if isinstance(device, SmartPlug):
                         devices_to_save.append(["Plug", device.get_switched_on(), device.get_consumption_rate()])
+
                     else:
                         devices_to_save.append(["Doorbell", device.get_switched_on(), device.get_option()])
 
@@ -415,15 +415,19 @@ class SmartHomeSystem:
 
         else:
             temp_new_devices = []
+            self.device_schedule = []
 
             for i, device in enumerate(devices_to_load):
-                if len(device) != 3:
+                if len(device) < 3:
                     messagebox.showinfo(
                        "Uh Oh! :(",
                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
-                    
+
+                if len(device) > 3:
+                    self.device_schedule.append(device[3:])
+
                 device_class = device[0].strip()
                 option1 = device[1].strip().lower()
                 option2 = device[2].strip().lower()
