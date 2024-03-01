@@ -62,7 +62,7 @@ class SmartHomeSystem:
 
     def update_clock(self):
         time = self.clock_label.cget("text")[6:-3]
-        time = f"{'0' if time == '23' else str(int(time) + 1).zfill(2)}:00"
+        time = f"{('0' if time == '23' else str(int(time) + 1)).zfill(2)}:00"
 
         self.clock_label.config(text=f"Time: {time}")
         self.win.after(3000, self.update_clock)
@@ -120,8 +120,8 @@ class SmartHomeSystem:
         for i, device in enumerate(self.home.get_devices()):
             device_status = "On" if device.get_switched_on() else "Off"
 
-            if i % 5 == 0:
-                curr_row += 5
+            if i % 7 == 0:
+                curr_row += 4
                 curr_col = 0
 
             if isinstance(device, SmartPlug):
@@ -130,10 +130,12 @@ class SmartHomeSystem:
                     image=self.plug_image,
                     width=100,
                     height=100,
+                    borderwidth=2,
+                    relief="solid"
                 )
                 plug_label.image = self.plug_image  # Maintain reference to avoid python garbage collection.
                 plug_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
-                plug_label.configure(bg=self.image_accent_colour)
+                plug_label.configure(bg="#4bad6a" if device.get_switched_on() else "#db4d4d")
 
                 device_label = Label(
                     self.create_widget_frame,
@@ -145,15 +147,17 @@ class SmartHomeSystem:
             else:
                 device_option = "On" if device.get_option() else "Off"
 
-                doorbell_label = Label(
+                doorbell_button = Button(
                     self.create_widget_frame,
                     image=self.doorbell_image,
                     width=100,
                     height=100,
+                    borderwidth=2,
+                    command=lambda n=i: self.toggle_switch_button_clicked(n)
                 )
-                doorbell_label.image = self.doorbell_image
-                doorbell_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 2))
-                doorbell_label.configure(bg=self.image_accent_colour)
+                doorbell_button.image = self.doorbell_image
+                doorbell_button.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 2))
+                doorbell_button.configure(bg="#4bad6a" if device.get_switched_on() else "#db4d4d")
 
                 device_label = Label(
                     self.create_widget_frame,
@@ -162,26 +166,19 @@ class SmartHomeSystem:
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))
                 device_label.configure(bg=self.widget_background_colour)
 
-            toggle_power = Button(
-                self.create_widget_frame,
-                text="Toggle Power",
-                command=lambda n=i: self.toggle_switch_button_clicked(n)
-            )
-            toggle_power.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 2))
-
             edit_option = Button(
                 self.create_widget_frame,
                 text="Edit Device",
                 command=lambda n=i: self.edit_device_button_clicked(n)
             )
-            edit_option.grid(column=curr_col, row=curr_row + 3, padx=10, pady=(0, 2))
+            edit_option.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 2))
 
             remove_device = Button(
                 self.create_widget_frame,
                 text="Delete Device",
                 command=lambda n=i: self.delete_device_button_clicked(n)
             )
-            remove_device.grid(column=curr_col, row=curr_row + 4, padx=10, pady=(0, 10))
+            remove_device.grid(column=curr_col, row=curr_row + 3, padx=10, pady=(0, 10))
 
             curr_col += 1
 

@@ -1,6 +1,4 @@
-
-
-class SmartPlug():
+class SmartPlug:
     def __init__(self, consumption_rate):
         self.consumption_rate = consumption_rate
         self.switched_on = False
@@ -25,7 +23,7 @@ Switched On: {self.switched_on}
 Consumption Rate: {self.consumption_rate}'''
 
 
-class SmartDoorBell():
+class SmartDoorBell:
     def __init__(self):
         self.sleepMode = False
         self.switched_on = False
