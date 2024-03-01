@@ -1,7 +1,5 @@
 from backendChallenge import *
 from tkinter import *
-from tkinter import filedialog
-from tkinter import messagebox
 
 
 class SmartHomeSystem:
@@ -29,14 +27,6 @@ class SmartHomeSystem:
 
     def run(self):
         self.create_widgets()
-
-        self.clock_label = Label(
-            self.main_frame,
-            text="Time: 00:00",
-        )
-        self.clock_label.grid(column=1, row=0, pady=(0, 10))
-
-        self.clock_label.after(3000, self.update_clock)
         self.win.mainloop()
 
     def update_widgets(self):
@@ -69,20 +59,6 @@ class SmartHomeSystem:
 
         )
         turn_off_all_button.grid(column=0, row=0, padx=(100, 10), pady=(0, 10))
-
-        save_devices = Button(
-            self.main_frame,
-            text="Save Devices",
-            command=lambda: self.save_device_list()
-        )
-        save_devices.grid(column=2, row=0, padx=(10, 0), pady=(0, 10))
-
-        load_devices = Button(
-            self.main_frame,
-            text="Load Devices",
-            command=lambda: self.load_device_list()
-        )
-        load_devices.grid(column=3, row=0, padx=(10, 0), pady=(0, 10))
 
         # Initialise the 5 devices
         for i, device in enumerate(self.home.get_devices()):
@@ -314,104 +290,6 @@ class SmartHomeSystem:
     def add_doorbell(self):
         self.home.add_device(SmartDoorBell())
         self.update_widgets()
-
-    def save_device_list(self):
-        file_save_location = filedialog.asksaveasfilename(
-            defaultextension=".csv",
-            parent=self.win,
-            filetypes=[('CSV Files', '*.csv')]
-        )
-
-        if not file_save_location:
-            return
-
-        # Used try and except on saving as when already open, you will get an error if you overwrite.
-        try:
-            with open(file_save_location, "w") as file:
-                devices_to_save = []
-
-                for device in self.home.get_devices():
-                    if isinstance(device, SmartPlug):
-                        devices_to_save.append(["Plug", device.get_switched_on(), device.get_consumption_rate()])
-                    else:
-                        devices_to_save.append(["Doorbell", device.get_switched_on(), device.get_option()])
-
-                for row in devices_to_save:
-                    row_device = ','.join(map(str, row))
-                    file.write(row_device + '\n')
-
-        except PermissionError:  # Only appears when trying to overwrite an open file.
-            messagebox.showinfo(
-                "Uh Oh! :(",
-                "The selected file is currently in use by another application."
-            )
-
-    def load_device_list(self):
-        file_load_location = filedialog.askopenfilename(
-            defaultextension=".csv",
-            parent=self.win,
-            filetypes=[('CSV Files', '*.csv')]
-        )
-
-        if not file_load_location:
-            return
-
-        with open(file_load_location, "r") as file:
-            devices_to_load = [line.strip().split(',') for line in file]
-
-        if devices_to_load == [['']]:
-            messagebox.showinfo(
-                "Uh Oh! :(",
-                "Empty File. Please select a valid device file."
-            )
-
-        else:
-            temp_new_devices = []
-
-            for i, device in enumerate(devices_to_load):
-                if len(device) != 3:
-                    messagebox.showinfo(
-                       "Uh Oh! :(",
-                       f"Invalid entry at line {i + 1}. Each record must have 3 columns."
-                    )
-                    break
-                    
-                device_class = device[0].strip()
-                option1 = device[1].strip().lower()
-                option2 = device[2].strip().lower()
-
-                if device_class == "Plug" and option1 in ["true", "false"] and option2.isdigit() and 0 <= int(
-                        option2) <= 150:
-                    new_device = SmartPlug(option2)
-                    temp_new_devices.append(new_device)
-
-                    if option1 == "true":
-                        new_device.toggle_switch()
-
-                elif device_class == "Doorbell" and option1 in ["true", "false"] and option2 in ["true", "false"]:
-                    new_device = SmartDoorBell()
-                    temp_new_devices.append(new_device)
-
-                    if option1 == "true":
-                        new_device.toggle_switch()
-
-                    if option2 == "true":
-                        new_device.set_option(True)
-
-                else:
-                    messagebox.showinfo(
-                        "Uh Oh! :(",
-                        f"Invalid entry at line {i + 1}. Please check the format of your entries."
-                    )
-                    break
-
-            else:  # Only entered if the for loop is NOT broken out of.
-                self.home.devices = []
-
-                for device in temp_new_devices:
-                    self.home.add_device(device)
-
-            self.update_widgets()
 
 
 def setup_home():
