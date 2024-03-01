@@ -1,121 +1,128 @@
-class SmartPlug:
-    def __init__(self, consumptionRate):
-        self.switchedOn = False
-        self.consumptionRate = consumptionRate
+class SmartDevice:
+    def __init__(self):
+        self.switched_on = False
 
-    def toggleSwitch(self):
-        self.switchedOn = not self.switchedOn
+    def toggle_switch(self):
+        self.switched_on = not self.switched_on
 
-    def getSwitchedOn(self) -> bool:
-        return self.switchedOn
+    def get_switched_on(self) -> bool:
+        return self.switched_on
 
-    def getConsumptionRate(self) -> int:
-        return self.consumptionRate
 
-    def setConsumptionRate(self, rate):
-        self.consumptionRate = rate
+class SmartPlug(SmartDevice):
+    def __init__(self, consumption_rate):
+        super().__init__()
+        self.consumption_rate = consumption_rate
+
+    def get_consumption_rate(self) -> int:
+        return self.consumption_rate
+
+    def set_consumption_rate(self, rate):
+        self.consumption_rate = rate
 
     def __str__(self) -> str:
-        return f"------\nSmart Plug\n------\nSwitched On: {self.switchedOn}\nConsumption Rate: {self.consumptionRate}\n"
+        return f'''------
+Smart Plug
+------
+Switched On: {self.switched_on}
+Consumption Rate: {self.consumption_rate}'''
 
 
-# Custom Device Class
-class SmartDoorBell:
+class SmartDoorBell(SmartDevice):
     def __init__(self):
-        self.switchedOn = False
+        super().__init__()
         self.sleepMode = False
 
-    def toggleSwitch(self):
-        self.switchedOn = not self.switchedOn
-
-    def getSwitchedOn(self) -> bool:
-        return self.switchedOn
-
-    def getOption(self) -> bool:
+    def get_option(self) -> bool:
         return self.sleepMode
 
-    def setOption(self, option):
+    def set_option(self, option):
         self.sleepMode = bool(option)
 
     def __str__(self) -> str:
-        return f"------\nSmart Doorbell\n------\nSwitched On: {self.switchedOn}\nSleep Mode: {self.sleepMode}\n"
+        return f'''------
+Smart Doorbell
+------
+Switched On: {self.switched_on}
+Sleep Mode: {self.sleepMode}
+'''
 
 
 class SmartHome:
     def __init__(self):
         self.devices = []
 
-    def getDevices(self) -> list:
+    def get_devices(self) -> list:
         return self.devices
 
-    def getDevicesAt(self, i) -> object:
+    def get_devices_at(self, i) -> object:
         return self.devices[i]
 
-    def addDevice(self, device):
+    def add_device(self, device):
         self.devices.append(device)
 
-    def removeDevice(self, i):
+    def remove_device(self, i):
         self.devices.pop(i)
 
-    def toggleSwitch(self, i):
-        self.devices[i].toggleSwitch()
+    def toggle_switch_at_index(self, i):
+        self.devices[i].toggle_switch()
 
-    def turnOnAll(self):
+    def turn_on_all(self):
         for device in self.devices:
-            device.switchedOn = True
+            device.switched_on = True
 
-    def turnOffAll(self):
+    def turn_off_all(self):
         for device in self.devices:
-            device.switchedOn = False
+            device.switched_on = False
 
     def __str__(self):
-        returnString = ""
+        return_string = ""
         for device in self.devices:
-            returnString += str(device)
+            return_string += str(device)
 
-        return returnString
+        return return_string
 
 
-def testSmartPlug():
+def test_smart_plug():
     plug = SmartPlug(45)
-    plug.toggleSwitch()
-    print(plug.getSwitchedOn())
-    print(plug.getConsumptionRate())
+    plug.toggle_switch()
+    print(plug.get_switched_on())
+    print(plug.get_consumption_rate())
     print(plug)
 
 
-def testSmartDoorBell():
+def test_smart_doorbell():
     doorbell = SmartDoorBell()
-    doorbell.toggleSwitch()
-    doorbell.setOption(input("Do you want sleep mode? (True or False): "))
+    doorbell.toggle_switch()
+    doorbell.set_option(input("Do you want sleep mode? (True or False): "))
     print(doorbell)
 
 
-def testSmartHome():
+def test_smart_home():
     home = SmartHome()
 
-    plugOne = SmartPlug(45)
-    plugTwo = SmartPlug(45)
+    plug_one = SmartPlug(45)
+    plug_two = SmartPlug(45)
     doorbell = SmartDoorBell()
 
-    plugOne.toggleSwitch()
+    plug_one.toggle_switch()
 
-    plugOne.setConsumptionRate("test")
-    plugOne.setConsumptionRate(True)
-    plugOne.setConsumptionRate(150)
-    plugTwo.setConsumptionRate(25)
+    plug_one.set_consumption_rate("test")
+    plug_one.set_consumption_rate(True)
+    plug_one.set_consumption_rate(150)
+    plug_two.set_consumption_rate(25)
 
-    doorbell.setOption(2)
-    doorbell.setOption(True)
+    doorbell.set_option(2)
+    doorbell.set_option(True)
 
-    home.addDevice("true")
-    home.addDevice(plugOne)
-    home.addDevice(plugTwo)
-    home.addDevice(doorbell)
+    home.add_device("true")
+    home.add_device(plug_one)
+    home.add_device(plug_two)
+    home.add_device(doorbell)
 
-    home.toggleSwitch(1)
+    home.toggle_switch_at_index(1)
     print(home)
 
-    home.turnOnAll()
+    home.turn_on_all()
     print("!!TURNED ON ALL DEVICES!!")
     print(home)
