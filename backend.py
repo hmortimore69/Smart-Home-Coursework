@@ -1,24 +1,21 @@
-class SmartDevice:
-    def __init__(self):
-        self.switched_on = False
-
-    def toggle_switch(self):
-        self.switched_on = not self.switched_on
-
-    def get_switched_on(self) -> bool:
-        return self.switched_on
 
 
-class SmartPlug(SmartDevice):
+class SmartPlug():
     def __init__(self, consumption_rate):
-        super().__init__()
         self.consumption_rate = consumption_rate
+        self.switched_on = False
 
     def get_consumption_rate(self) -> int:
         return self.consumption_rate
 
     def set_consumption_rate(self, rate):
         self.consumption_rate = rate
+
+    def toggle_switch(self):
+        self.switched_on = not self.switched_on
+
+    def get_switched_on(self) -> bool:
+        return self.switched_on
 
     def __str__(self) -> str:
         return f'''------
@@ -28,16 +25,22 @@ Switched On: {self.switched_on}
 Consumption Rate: {self.consumption_rate}'''
 
 
-class SmartDoorBell(SmartDevice):
+class SmartDoorBell():
     def __init__(self):
-        super().__init__()
         self.sleepMode = False
+        self.switched_on = False
 
     def get_option(self) -> bool:
         return self.sleepMode
 
     def set_option(self, option):
         self.sleepMode = bool(option)
+
+    def toggle_switch(self):
+        self.switched_on = not self.switched_on
+
+    def get_switched_on(self) -> bool:
+        return self.switched_on
 
     def __str__(self) -> str:
         return f'''------
