@@ -9,7 +9,7 @@ class SmartHomeSystem:
         self.home = home
 
         # Initialise all objects needed for future assignment and manipulation
-        self.consumption_rate_window = None
+        self.accessibility_win = None
         self.edit_win = None
         self.add_win = None
         self.clock_label = None
@@ -24,7 +24,7 @@ class SmartHomeSystem:
         self.create_widget_frame = Frame(self.main_frame)
         self.create_widget_frame.grid(column=0, row=2, columnspan=5)
 
-        # Create light bulb image and resize to button size.
+        # Create all images and resize to appropriate sizes.
         self.plug_image = PhotoImage(file="images/plug.png")
         self.plug_image = self.plug_image.subsample(
             self.plug_image.width() // 100,
@@ -46,6 +46,8 @@ class SmartHomeSystem:
         self.win.configure(bg=self.background_colour)
         self.main_frame.configure(bg=self.background_colour)
         self.create_widget_frame.configure(bg=self.widget_background_colour)
+
+        self.win.resizable(False, False)
 
     def run(self):
         self.create_widgets()
@@ -112,6 +114,13 @@ class SmartHomeSystem:
         self.clock_label.grid(column=2, row=0, pady=(0, 10))
         self.clock_label.after(3000, self.update_clock)
 
+        accessibility_label = Button(
+            self.main_frame,
+            text="Accessibility Settings",
+            command=lambda: self.accessibility_settings()
+        )
+        accessibility_label.grid(column=4, row=len(self.home.get_devices()) + 1, pady=(10, 0))
+
     def create_device_widgets(self):
         curr_row = 0
         curr_col = 0
@@ -125,13 +134,12 @@ class SmartHomeSystem:
                 curr_col = 0
 
             if isinstance(device, SmartPlug):
-                plug_label = Label(
+                plug_label = Button(
                     self.create_widget_frame,
                     image=self.plug_image,
                     width=100,
                     height=100,
-                    borderwidth=2,
-                    relief="solid"
+                    command=lambda n=i: self.toggle_switch_button_clicked(n)
                 )
                 plug_label.image = self.plug_image  # Maintain reference to avoid python garbage collection.
                 plug_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
@@ -144,7 +152,7 @@ class SmartHomeSystem:
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))
                 device_label.configure(bg=self.widget_background_colour)
 
-            else:
+            else:  # Else enters if the device is a doorbell.
                 device_option = "On" if device.get_option() else "Off"
 
                 doorbell_button = Button(
@@ -197,6 +205,7 @@ class SmartHomeSystem:
     def edit_device_button_clicked(self, i):
         self.edit_win = Toplevel(self.win)
         self.edit_win.configure(bg=self.background_colour)
+        self.edit_win.resizable(False, False)
 
         if isinstance(self.home.get_devices()[i], SmartPlug):
             consumption_rate_var = StringVar()
@@ -277,6 +286,7 @@ class SmartHomeSystem:
     def add_device_button_clicked(self):
         self.add_win = Toplevel(self.win)
         self.add_win.configure(bg=self.background_colour, padx=10, pady=10)
+        self.add_win.resizable(False, False)
 
         add_question_label = Label(
             self.add_win,
@@ -361,6 +371,7 @@ class SmartHomeSystem:
     def save_device_list(self):
         file_save_location = filedialog.asksaveasfilename(
             defaultextension=".csv",
+            initialdir="/saves",
             parent=self.win,
             filetypes=[('CSV Files', '*.csv')]
         )
@@ -393,6 +404,7 @@ class SmartHomeSystem:
     def load_device_list(self):
         file_load_location = filedialog.askopenfilename(
             defaultextension=".csv",
+            initialdir="/saves",
             parent=self.win,
             filetypes=[('CSV Files', '*.csv')]
         )
@@ -460,6 +472,11 @@ class SmartHomeSystem:
                     self.home.add_device(device)
 
             self.update_device_widgets()
+
+    def accessibility_settings(self):
+        self.accessibility_win = Toplevel(self.win)
+        self.accessibility_win.config(bg=self.background_colour)
+        self.accessibility_win.resizable(False, False)
 
 
 def setup_home():

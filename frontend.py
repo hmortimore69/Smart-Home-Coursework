@@ -7,7 +7,6 @@ class SmartHomeSystem:
         self.home = home
 
         # Initialise all objects needed for future assignment and manipulation
-        self.consumption_rate_window = None
         self.edit_win = None
         self.add_win = None
         self.clock_label = None
