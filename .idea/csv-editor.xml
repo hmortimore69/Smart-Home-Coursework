@@ -3,14 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\test_saves\test_with_missing_values.csv">
+        <entry key="\saves\test_with_missing_values.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\test_saves\working_test.csv">
+        <entry key="\saves\working_test.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
