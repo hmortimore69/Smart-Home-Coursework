@@ -155,7 +155,7 @@ class SmartHomeSystem:
 
                 device_label = Label(
                     self.create_widget_frame,
-                    text=f"Status: {device_status}\n Consumption Rate: {device.get_consumption_rate()}",
+                    text=f"Status: {device_status}\n Consumption: {device.get_consumption_rate()}",
                     font=self.font_final
                 )
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))

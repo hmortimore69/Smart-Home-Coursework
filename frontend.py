@@ -18,7 +18,7 @@ class SmartHomeSystem:
         self.main_frame.grid(column=0, row=0, padx=10, pady=10)
 
         # Initial colouring and styling
-        self.background_colour = "teal"
+        self.background_colour = "#D3D3D3"
 
         # Assign default styling
         self.win.configure(bg=self.background_colour)
@@ -47,14 +47,18 @@ class SmartHomeSystem:
         turn_on_all_button = Button(
             self.main_frame,
             text="Turn On All",
-            command=lambda: self.turn_on_all_button_clicked()
+            command=lambda: self.turn_on_all_button_clicked(),
+            relief="solid",
+            bd=1
         )
         turn_on_all_button.grid(column=0, row=0, padx=(10, 100), pady=(0, 10))
 
         turn_off_all_button = Button(
             self.main_frame,
             text="Turn Off All",
-            command=lambda: self.turn_off_all_button_clicked()
+            command=lambda: self.turn_off_all_button_clicked(),
+            relief="solid",
+            bd=1
 
         )
         turn_off_all_button.grid(column=0, row=0, padx=(100, 10), pady=(0, 10))
@@ -66,44 +70,54 @@ class SmartHomeSystem:
             if isinstance(device, SmartPlug):
                 device_label = Label(
                     self.main_frame,
-                    text=f"Smart Plug: {device_status}, Consumption Rate: {device.get_consumption_rate()}"
+                    text=f"Plug: {device_status}, Consumption: {device.get_consumption_rate()}"
                 )
                 device_label.grid(column=0, row=i + 1, sticky="w")
+                device_label.config(bg=self.background_colour)
 
             else:
                 device_option = "On" if device.get_option() else "Off"
 
                 device_label = Label(
                     self.main_frame,
-                    text=f"Smart Doorbell: {device_status}, Sleep Mode: {device_option}"
+                    text=f"Doorbell: {device_status}, Sleep Mode: {device_option}"
                 )
                 device_label.grid(column=0, row=i + 1, sticky="w")
+                device_label.config(bg=self.background_colour)
 
             toggle_power = Button(
                 self.main_frame,
                 text="Toggle Power",
-                command=lambda n=i: self.toggle_switch_button_clicked(n)
+                command=lambda n=i: self.toggle_switch_button_clicked(n),
+                relief="solid",
+                bd=1
             )
             toggle_power.grid(column=1, row=i + 1, padx=(10, 0))
 
             edit_option = Button(
                 self.main_frame,
                 text="Edit Device",
-                command=lambda n=i: self.edit_device_button_clicked(n)
+                command=lambda n=i: self.edit_device_button_clicked(n),
+                relief="solid",
+                bd=1
             )
             edit_option.grid(column=2, row=i + 1, padx=(10, 0))
 
             remove_device = Button(
                 self.main_frame,
                 text="Delete Device",
-                command=lambda n=i: self.delete_device_button_clicked(n)
+                command=lambda n=i: self.delete_device_button_clicked(n),
+                relief="solid",
+                bd=1
             )
             remove_device.grid(column=3, row=i + 1, padx=(10, 0))
 
         add_device = Button(
             self.main_frame,
             text="Add Device",
-            command=self.add_device_button_clicked
+            command=self.add_device_button_clicked,
+            relief="solid",
+            bd=1
         )
         add_device.grid(column=0, row=len(self.home.get_devices()) + 1, pady=(10, 0))
 
@@ -129,7 +143,7 @@ class SmartHomeSystem:
 
             edit_label = Label(
                 self.edit_win,
-                text="Set Consumption Rate"
+                text="Set Consumption Rate",
             )
             edit_label.grid(column=0, row=0, pady=(10, 0))
 
