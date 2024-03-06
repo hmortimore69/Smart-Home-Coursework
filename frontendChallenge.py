@@ -11,7 +11,6 @@ class SmartHomeSystem:
         # Initialise all objects needed for future assignment and manipulation
         self.accessibility_win = None
         self.consumption_rate_window = None
-        self.edit_win = None
         self.add_win = None
         self.clock_label = None
         self.device_schedule = []
