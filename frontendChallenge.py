@@ -10,6 +10,7 @@ class SmartHomeSystem:
 
         # Initialise all objects needed for future assignment and manipulation
         self.accessibility_win = None
+        self.device_schedular_win = None
         self.consumption_rate_window = None
         self.add_win = None
         self.clock_label = None
@@ -137,6 +138,14 @@ class SmartHomeSystem:
         )
         self.clock_label.grid(column=2, row=0, pady=(0, 10))
         self.clock_label.after(3000, self.update_clock)
+
+        open_schedule_win = Button(
+            self.main_frame,
+            text="Device Scheduler",
+            font=self.font_final,
+            command=lambda: self.device_scheduler(),
+        )
+        open_schedule_win.grid(column=0, row=len(self.home.get_devices()) + 1, pady=(10, 0))
 
     def create_device_widgets(self):
         curr_row = 0
@@ -410,7 +419,6 @@ class SmartHomeSystem:
 
         else:
             temp_new_devices = []
-            self.device_schedule = []
 
             for i, device in enumerate(devices_to_load):
                 if len(device) < 3:
@@ -419,9 +427,6 @@ class SmartHomeSystem:
                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
-
-                if len(device) > 3:
-                    self.device_schedule.append(device[3:])
 
                 device_class = device[0].strip()
                 option1 = device[1].strip().lower()
@@ -458,12 +463,16 @@ class SmartHomeSystem:
                     self.home.add_device(device)
 
             self.update_device_widgets()
-            print(self.device_schedule)
 
     def accessibility_settings(self):
         self.accessibility_win = Toplevel(self.win)
         self.accessibility_win.config(bg=self.background_colour)
         self.accessibility_win.resizable(False, False)
+
+    def device_scheduler(self):
+        self.device_schedular_win = Toplevel(self.win)
+        self.device_schedular_win.config(bg=self.background_colour)
+        self.device_schedular_win.resizable(False, False)
 
 
 def setup_home():

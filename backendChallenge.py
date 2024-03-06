@@ -1,6 +1,7 @@
 class SmartDevice:
     def __init__(self):
         self.switched_on = False
+        self.schedule = []
 
     def toggle_switch(self):
         self.switched_on = not self.switched_on
@@ -19,6 +20,13 @@ class SmartPlug(SmartDevice):
 
     def set_consumption_rate(self, rate):
         self.consumption_rate = rate
+
+    def add_to_schedule(self, time, option, value):
+        if 0 <= int(time) <= 23 and option.lower() in ["power", "rate"] and 0 <= value <= 150:
+            self.schedule.append([time, option, value])
+
+    def get_schedule(self):
+        return self.schedule
 
     def __str__(self) -> str:
         return f'''------
