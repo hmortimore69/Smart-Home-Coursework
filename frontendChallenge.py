@@ -1,4 +1,4 @@
-from backend import *
+from backendChallenge import *
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -10,6 +10,7 @@ class SmartHomeSystem:
 
         # Initialise all objects needed for future assignment and manipulation
         self.accessibility_win = None
+        self.consumption_rate_window = None
         self.edit_win = None
         self.add_win = None
         self.clock_label = None
@@ -50,19 +51,36 @@ class SmartHomeSystem:
 
         self.win.mainloop()
 
-    def update_all_widgets(self):  # Used for accessibility updates.
+    def update_all_widgets(self):  # Updates every widget in the window
         for child in self.win.winfo_children():
             child.destroy()
 
         self.create_interface_widgets()
         self.create_device_widgets()
 
-    def update_device_widgets(self):
+    def update_device_widgets(self):  # Updates all device objects
         # Clear the create_widget_frame
         for child in self.create_widget_frame.winfo_children():
             child.destroy()
 
         self.create_device_widgets()
+
+    def update_single_device(self, i, row, col):  # Updates only one device label
+        device = self.home.get_devices()[i]
+        device_status = "On" if self.home.get_devices()[i].get_switched_on() else "Off"
+
+        device_label = self.create_widget_frame.grid_slaves(row=row + 1, column=col)[0]
+        device_image_colour = "#4bad6a" if device.get_switched_on() else "#db4d4d"
+        icon_background = self.create_widget_frame.grid_slaves(row=row, column=col)[0]
+        delete_icon_background = self.create_widget_frame.grid_slaves(row=row, column=col)[1]
+
+        icon_background["bg"] = device_image_colour
+        delete_icon_background["bg"] = device_image_colour
+
+        if isinstance(device, SmartDoorBell):
+            device_label["text"] = f"Status: {device_status}\n Sleep Mode: {device.get_option()}"
+        else:
+            device_label["text"] = f"Status: {device_status}\n Consumption: {device.get_consumption_rate()}"
 
     def update_clock(self):
         time = self.clock_label.cget("text")[6:-3]
@@ -78,7 +96,7 @@ class SmartHomeSystem:
             font=self.font_final,
             command=lambda: self.turn_on_all_button_clicked()
         )
-        turn_on_all_button.grid(column=0, row=0, padx=10, pady=(0, 10), sticky="ew")
+        turn_on_all_button.grid(column=0, row=0, padx=(10, 0), pady=(0, 10))
 
         turn_off_all_button = Button(
             self.main_frame,
@@ -86,7 +104,7 @@ class SmartHomeSystem:
             font=self.font_final,
             command=lambda: self.turn_off_all_button_clicked()
         )
-        turn_off_all_button.grid(column=1, row=0, padx=10, pady=(0, 10), sticky="ew")
+        turn_off_all_button.grid(column=1, row=0, padx=(20, 0), pady=(0, 10))
 
         save_devices = Button(
             self.main_frame,
@@ -121,14 +139,6 @@ class SmartHomeSystem:
         self.clock_label.grid(column=2, row=0, pady=(0, 10))
         self.clock_label.after(3000, self.update_clock)
 
-        accessibility_label = Button(
-            self.main_frame,
-            text="Accessibility Settings",
-            font=self.font_final,
-            command=lambda: self.accessibility_settings()
-        )
-        accessibility_label.grid(column=4, row=len(self.home.get_devices()) + 1, pady=(10, 0))
-
     def create_device_widgets(self):
         curr_row = 0
         curr_col = 0
@@ -142,12 +152,15 @@ class SmartHomeSystem:
                 curr_col = 0
 
             if isinstance(device, SmartPlug):
+                rate_var = IntVar()
+                rate_var.set(device.get_consumption_rate())
+
                 plug_label = Button(
                     self.create_widget_frame,
                     image=self.plug_image,
                     width=100,
                     height=100,
-                    command=lambda n=i: self.toggle_switch_button_clicked(n)
+                    command=lambda n=i, row=curr_row, col=curr_col: self.toggle_switch_button_clicked(n, row, col)
                 )
                 plug_label.image = self.plug_image  # Maintain reference to avoid python garbage collection.
                 plug_label.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
@@ -161,16 +174,32 @@ class SmartHomeSystem:
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))
                 device_label.configure(bg=self.widget_background_colour)
 
-            else:  # Else enters if the device is a doorbell.
-                device_option = "On" if device.get_option() else "Off"
+                consumption_rate_edit = Spinbox(
+                    self.create_widget_frame,
+                    from_=0,
+                    to=150,
+                    increment=1,
+                    width=4,
+                    textvariable=rate_var,
+                    validate="key",
+                    validatecommand=(self.create_widget_frame.register(validate_consumption_rate_entry), "%P"),
+                    command=lambda n=i, row=curr_row, col=curr_col: self.set_plug_consumption(
+                        n,
+                        consumption_rate_edit.get(),
+                        row,
+                        col
+                    ),
+                )
+                consumption_rate_edit.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 10))
 
+            else:  # Else enters if the device is a doorbell.
                 doorbell_button = Button(
                     self.create_widget_frame,
                     image=self.doorbell_image,
                     width=100,
                     height=100,
                     borderwidth=2,
-                    command=lambda n=i: self.toggle_switch_button_clicked(n)
+                    command=lambda n=i, row=curr_row, col=curr_col: self.toggle_switch_button_clicked(n, row, col)
                 )
                 doorbell_button.image = self.doorbell_image
                 doorbell_button.grid(column=curr_col, row=curr_row, padx=10, pady=(10, 5))
@@ -178,18 +207,18 @@ class SmartHomeSystem:
 
                 device_label = Label(
                     self.create_widget_frame,
-                    text=f"Status: {device_status}\n Sleep Mode: {device_option}",
+                    text=f"Status: {device_status}\n Sleep Mode: {device.get_option()}",
                     font=self.font_final
                 )
-                device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))
+                device_label.grid(column=curr_col, row=curr_row + 1, padx=10)
                 device_label.configure(bg=self.widget_background_colour)
 
-            edit_option = Button(
-                self.create_widget_frame,
-                text="Edit Device",
-                command=lambda n=i: self.edit_device_button_clicked(n)
-            )
-            edit_option.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 10))
+                sleep_mode_edit = Button(
+                    self.create_widget_frame,
+                    text=f"Toggle Sleep Mode",
+                    command=lambda n=i, row=curr_row, col=curr_col: self.toggle_sleep_mode_button_clicked(n, row, col)
+                )
+                sleep_mode_edit.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 10))
 
             remove_device = Button(
                 self.create_widget_frame,
@@ -213,88 +242,17 @@ class SmartHomeSystem:
         self.home.turn_off_all()
         self.update_device_widgets()
 
-    def toggle_switch_button_clicked(self, i):
+    def toggle_switch_button_clicked(self, i, row, col):
         self.home.toggle_switch_at_index(i)
-        self.update_device_widgets()
+        self.update_single_device(i, row, col)
 
-    def edit_device_button_clicked(self, i):
-        self.edit_win = Toplevel(self.win)
-        self.edit_win.configure(bg=self.background_colour)
-        self.edit_win.resizable(False, False)
+    def toggle_sleep_mode_button_clicked(self, i, row, col):
+        self.home.get_devices()[i].toggle_option()
+        self.update_single_device(i, row, col)
 
-        if isinstance(self.home.get_devices()[i], SmartPlug):
-            rate_var = StringVar()
-            rate_var.set(str(self.home.get_devices()[i].get_consumption_rate()))
-
-            edit_label = Label(
-                self.edit_win,
-                text="Set Consumption Rate",
-                font=self.font_final
-            )
-            edit_label.grid(column=0, row=0, pady=(10, 0))
-
-            rate_spinbox = Spinbox(
-                self.edit_win,
-                from_=0,
-                to=150,
-                increment=1,
-                width=4,
-                textvariable=rate_var,
-                validate="key",
-                validatecommand=(self.edit_win.register(validate_entry), "%P")
-            )
-            rate_spinbox.grid(column=0, row=2, pady=(10, 0))
-
-            rate_confirm_button = Button(
-                self.edit_win,
-                text="Confirm",
-                command=lambda n=i: self.set_plug_consumption(i, rate_spinbox.get())
-            )
-            rate_confirm_button.grid(column=0, row=6, padx=60, pady=(10, 10))
-
-        else:
-            option_value = BooleanVar()
-            option_value.set(self.home.devices[i].get_option())
-
-            edit_label = Label(
-                self.edit_win,
-                text="Sleep Mode",
-                font=self.font_final
-            )
-            edit_label.grid(column=0, row=0, padx=60, pady=(10, 10))
-
-            true_button = Radiobutton(
-                self.edit_win,
-                text="On",
-                variable=option_value,
-                value=True
-            )
-            true_button.grid(column=0, row=2, pady=(0, 5))
-
-            false_button = Radiobutton(
-                self.edit_win,
-                text="Off",
-                variable=option_value,
-                value=False
-            )
-            false_button.grid(column=0, row=3)
-
-            edit_confirm_button = Button(
-                self.edit_win,
-                text="Confirm",
-                command=lambda n=i: self.set_custom_device_option(n, option_value.get())
-            )
-            edit_confirm_button.grid(column=0, row=6, padx=60, pady=(10, 10))
-
-    def set_custom_device_option(self, i, value):
-        self.home.devices[i].set_option(value)
-        self.edit_win.destroy()
-        self.update_device_widgets()
-
-    def set_plug_consumption(self, i, value):
+    def set_plug_consumption(self, i, value, row, col):
         self.home.devices[i].set_consumption_rate(value)
-        self.edit_win.destroy()
-        self.update_device_widgets()
+        self.update_single_device(i, row, col)
 
     def delete_device_button_clicked(self, i):
         self.home.remove_device(i)
@@ -361,7 +319,7 @@ class SmartHomeSystem:
             increment=1,
             width=4,
             validate="key",
-            validatecommand=(self.add_win.register(validate_entry), "%P")
+            validatecommand=(self.add_win.register(validate_consumption_rate_entry), "%P")
         )
         add_rate_spinbox.grid(column=1, row=5, pady=(10, 0))
 
@@ -541,7 +499,7 @@ Add 5 devices by referencing their index.''')
     return home
 
 
-def validate_entry(text):
+def validate_consumption_rate_entry(text):
     if text.isdigit() or not text:
         if text and int(text) > 150:
             return False

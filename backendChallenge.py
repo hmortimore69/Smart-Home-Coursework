@@ -39,6 +39,9 @@ class SmartDoorBell(SmartDevice):
     def set_option(self, option):
         self.sleepMode = bool(option)
 
+    def toggle_option(self):
+        self.sleepMode = not self.sleepMode
+
     def __str__(self) -> str:
         return f'''------
 Smart Doorbell
