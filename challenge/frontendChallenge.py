@@ -2,6 +2,7 @@ from backendChallenge import *
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import colorchooser
 
 
 class SmartHomeSystem:
@@ -9,21 +10,18 @@ class SmartHomeSystem:
         self.home = home
 
         # Initialise all objects needed for future assignment and manipulation
+        self.main_frame = None
+        self.create_widget_frame = None
         self.accessibility_win = None
         self.device_schedular_win = None
         self.consumption_rate_window = None
         self.add_win = None
         self.clock_label = None
         self.device_schedule = []
+        self.theme = "light"
 
         self.win = Tk()
         self.win.title("Smart Home System")
-
-        self.main_frame = Frame(self.win)
-        self.main_frame.grid(column=0, row=0, padx=10, pady=10)
-
-        self.create_widget_frame = Frame(self.main_frame)
-        self.create_widget_frame.grid(column=0, row=2, columnspan=5)
 
         # Create all images and resize to appropriate sizes.
         self.plug_image = resize_image("images/plug.png", 6, 6)
@@ -31,17 +29,15 @@ class SmartHomeSystem:
         self.delete_image = resize_image("images/cross.png", 26, 26)
 
         # Initial colouring and styling
-        self.background_colour = "#66b2b2"
-        self.widget_background_colour = "#008080"
+        self.background_colour = "#D3D3D3"
+        self.widget_background_colour = "#b6b6b6"
+        self.text_colour = "black"
 
         self.font = "Ariel"
         self.font_size = 9
         self.font_final = (self.font, self.font_size)
 
-        # Assign default styling
         self.win.configure(bg=self.background_colour)
-        self.main_frame.configure(bg=self.background_colour)
-        self.create_widget_frame.configure(bg=self.widget_background_colour)
 
         self.win.resizable(False, False)
 
@@ -90,9 +86,18 @@ class SmartHomeSystem:
         self.win.after(3000, self.update_clock)
 
     def create_interface_widgets(self):
+        self.main_frame = Frame(self.win)
+        self.main_frame.grid(column=0, row=0, padx=10, pady=10)
+        self.main_frame.configure(bg=self.background_colour)
+
+        self.create_widget_frame = Frame(self.main_frame)
+        self.create_widget_frame.grid(column=0, row=2, columnspan=5)
+        self.create_widget_frame.configure(bg=self.widget_background_colour)
+
         turn_on_all_button = Button(
             self.main_frame,
             text="Turn On All",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_on_all_button_clicked()
         )
@@ -101,6 +106,7 @@ class SmartHomeSystem:
         turn_off_all_button = Button(
             self.main_frame,
             text="Turn Off All",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_off_all_button_clicked()
         )
@@ -109,6 +115,7 @@ class SmartHomeSystem:
         save_devices = Button(
             self.main_frame,
             text="Save Devices",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.save_device_list()
         )
@@ -117,6 +124,7 @@ class SmartHomeSystem:
         load_devices = Button(
             self.main_frame,
             text="Load Devices",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.load_device_list()
         )
@@ -125,6 +133,7 @@ class SmartHomeSystem:
         add_device = Button(
             self.main_frame,
             text="Add Device",
+            fg=self.text_colour,
             font=self.font_final,
             command=self.add_device_button_clicked,
             width=20
@@ -134,6 +143,7 @@ class SmartHomeSystem:
         self.clock_label = Label(
             self.main_frame,
             text="Time: 00:00",
+            fg=self.text_colour,
             font=self.font_final
         )
         self.clock_label.grid(column=2, row=0, pady=(0, 10))
@@ -142,10 +152,20 @@ class SmartHomeSystem:
         open_schedule_win = Button(
             self.main_frame,
             text="Device Scheduler",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.device_scheduler(),
         )
         open_schedule_win.grid(column=0, row=len(self.home.get_devices()) + 1, pady=(10, 0))
+
+        open_accessibility_win = Button(
+            self.main_frame,
+            text="Accessibility Settings",
+            fg=self.text_colour,
+            font=self.font_final,
+            command=lambda: self.accessibility_settings()
+        )
+        open_accessibility_win.grid(column=4, row=len(self.home.get_devices()) + 1, pady=(10, 0))
 
     def create_device_widgets(self):
         curr_row = 0
@@ -177,6 +197,7 @@ class SmartHomeSystem:
                 device_label = Label(
                     self.create_widget_frame,
                     text=f"Status: {device_status}\n Consumption: {device.get_consumption_rate()}",
+                    fg=self.text_colour,
                     font=self.font_final
                 )
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10, pady=(0, 2))
@@ -184,6 +205,7 @@ class SmartHomeSystem:
 
                 consumption_rate_edit = Spinbox(
                     self.create_widget_frame,
+                    font=self.font_final,
                     from_=0,
                     to=150,
                     increment=1,
@@ -216,6 +238,7 @@ class SmartHomeSystem:
                 device_label = Label(
                     self.create_widget_frame,
                     text=f"Status: {device_status}\n Sleep Mode: {device.get_option()}",
+                    fg=self.text_colour,
                     font=self.font_final
                 )
                 device_label.grid(column=curr_col, row=curr_row + 1, padx=10)
@@ -224,6 +247,8 @@ class SmartHomeSystem:
                 sleep_mode_edit = Button(
                     self.create_widget_frame,
                     text=f"Toggle Sleep Mode",
+                    font=self.font_final,
+                    fg=self.text_colour,
                     command=lambda n=i, row=curr_row, col=curr_col: self.toggle_sleep_mode_button_clicked(n, row, col)
                 )
                 sleep_mode_edit.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 10))
@@ -274,6 +299,7 @@ class SmartHomeSystem:
         add_question_label = Label(
             self.add_win,
             text="Would you like to add a Smart Doorbell or a Smart Plug?",
+            fg=self.text_colour,
             font=self.font_final
         )
         add_question_label.grid(row=0, column=1, columnspan=2)
@@ -281,6 +307,7 @@ class SmartHomeSystem:
         add_smart_plug = Label(
             self.add_win,
             text="Smart Plug",
+            fg=self.text_colour,
             font=self.font_final
         )
         add_smart_plug.grid(column=1, row=1, pady=(10, 5), padx=10)
@@ -288,6 +315,7 @@ class SmartHomeSystem:
         add_smart_doorbell = Label(
             self.add_win,
             text="Smart Doorbell",
+            fg=self.text_colour,
             font=self.font_final
         )
         add_smart_doorbell.grid(column=2, row=1, pady=(10, 5), padx=10)
@@ -316,12 +344,14 @@ class SmartHomeSystem:
         rate_label = Label(
             self.add_win,
             text="Set Consumption Rate",
+            fg=self.text_colour,
             font=self.font_final
         )
         rate_label.grid(column=1, row=3, pady=(10, 0))
 
         add_rate_spinbox = Spinbox(
             self.add_win,
+            font=self.font_final,
             from_=0,
             to=150,
             increment=1,
@@ -334,6 +364,7 @@ class SmartHomeSystem:
         rate_confirm_button = Button(
             self.add_win,
             text="Confirm",
+            fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.confirm_new_plug(
                 add_rate_spinbox,
@@ -423,8 +454,8 @@ class SmartHomeSystem:
             for i, device in enumerate(devices_to_load):
                 if len(device) < 3:
                     messagebox.showinfo(
-                       "Uh Oh! :(",
-                       f"Invalid entry at line {i + 1}. Each record must have 3 columns."
+                        "Uh Oh! :(",
+                        f"Invalid entry at line {i + 1}. Each record must have 3 columns."
                     )
                     break
 
@@ -468,6 +499,164 @@ class SmartHomeSystem:
         self.accessibility_win = Toplevel(self.win)
         self.accessibility_win.config(bg=self.background_colour)
         self.accessibility_win.resizable(False, False)
+
+        light_mode_image = resize_image("images/light_mode.png", 2, 2)
+        dark_mode_image = resize_image("images/dark_mode.png", 2, 2)
+        slider_image = resize_image("images/slider.png", 2, 2)
+
+        custom_bg_colour = StringVar()
+        custom_accent_colour = StringVar()
+        custom_font_size = IntVar()
+        custom_text_colour = StringVar()
+        theme_value = StringVar()
+
+        custom_bg_colour.set(self.background_colour)
+        custom_accent_colour.set(self.widget_background_colour)
+        custom_font_size.set(self.font_size)
+        custom_text_colour.set(self.text_colour)
+        theme_value.set(self.theme)
+
+        light_mode_button = Radiobutton(
+            self.accessibility_win,
+            fg=self.text_colour,
+            image=light_mode_image,
+            compound="top",
+            text="Light Mode",
+            value="light",
+            variable=theme_value
+        )
+        light_mode_button.image = light_mode_image
+        light_mode_button.grid(column=1, row=1, pady=10, padx=10)
+
+        dark_mode_button = Radiobutton(
+            self.accessibility_win,
+            fg=self.text_colour,
+            image=dark_mode_image,
+            compound="top",
+            text="Dark Mode",
+            value="dark",
+            variable=theme_value
+        )
+        dark_mode_button.image = dark_mode_image
+        dark_mode_button.grid(column=2, row=1, pady=10, padx=10)
+
+        custom_mode_button = Radiobutton(
+            self.accessibility_win,
+            fg=self.text_colour,
+            image=slider_image,
+            compound="top",
+            text="Custom",
+            value="custom",
+            variable=theme_value
+        )
+        custom_mode_button.image = slider_image
+        custom_mode_button.grid(column=3, row=1, pady=10, padx=10)
+
+        custom_background_label = Label(
+            self.accessibility_win,
+            text="Custom Background Colour:",
+            font=self.font_final,
+            fg=self.text_colour
+        )
+        custom_background_label.grid(column=4, row=1, pady=10, padx=(10, 5), sticky="NE")
+
+        custom_background_button = Button(
+            self.accessibility_win,
+            width=2,
+            bg=custom_bg_colour.get(),
+            command=lambda: ask_colour(custom_bg_colour, custom_background_button)
+        )
+        custom_background_button.grid(column=5, row=1, pady=10, padx=(0, 10), sticky="NW")
+
+        custom_accent_label = Label(
+            self.accessibility_win,
+            text="Custom Accent Colour:",
+            font=self.font_final,
+            fg=self.text_colour
+        )
+        custom_accent_label.grid(column=4, row=1, pady=10, padx=(10, 5), sticky="E")
+
+        custom_accent_button = Button(
+            self.accessibility_win,
+            width=2,
+            bg=custom_accent_colour.get(),
+            command=lambda: ask_colour(custom_accent_colour, custom_accent_button)
+        )
+        custom_accent_button.grid(column=5, row=1, pady=10, padx=(0, 10), sticky="W")
+
+        custom_text_colour_label = Label(
+            self.accessibility_win,
+            font=self.font_final,
+            fg=self.text_colour,
+            text="Custom Text Colour:"
+        )
+        custom_text_colour_label.grid(column=4, row=1, pady=10, padx=(10, 5), sticky="SE")
+
+        custom_text_colour_button = Button(
+            self.accessibility_win,
+            bg=self.text_colour,
+            width=2,
+            command=lambda: ask_colour(custom_text_colour, custom_text_colour_button)
+        )
+        custom_text_colour_button.grid(column=5, row=1, pady=10, padx=(0, 10), sticky="SW")
+
+        custom_font_size_button = Scale(
+            self.accessibility_win,
+            font=self.font_final,
+            fg=self.text_colour,
+            label="Font Size:",
+            bd=0,
+            bg=self.background_colour,
+            from_=5,
+            to=15,
+            length=300,
+            orient=HORIZONTAL,
+            variable=custom_font_size
+        )
+        custom_font_size_button.grid(column=1, row=2, pady=10, padx=10, sticky="S", columnspan=3)
+
+        apply_changes_button = Button(
+            self.accessibility_win,
+            fg=self.text_colour,
+            text="Apply Changes",
+            font=self.font_final,
+
+            #  IDE screamed at me if I didn't do it like this for PEP8. D:
+            command=lambda theme=theme_value,
+            bg_colour=custom_bg_colour,
+            bg_accent=custom_accent_colour,
+            font_size=custom_font_size,
+            font_colour=custom_text_colour: self.update_styling(
+                theme,
+                bg_colour,
+                bg_accent,
+                font_size,
+                font_colour
+            )
+        )
+        apply_changes_button.grid(column=2, row=3, pady=10, padx=10, columnspan=3)
+
+    def update_styling(self, theme, bg_colour, bg_accent, font_size, font_colour):
+        self.theme = theme.get()
+        self.font_size = font_size.get()
+        self.font_final = (self.font, self.font_size)
+
+        if self.theme == "light":
+            self.background_colour = "#D3D3D3"
+            self.widget_background_colour = "#b6b6b6"
+            self.text_colour = "#000000"
+
+        elif self.theme == "dark":
+            pass
+
+        elif self.theme == "custom":
+            self.background_colour = bg_colour.get()
+            self.widget_background_colour = bg_accent.get()
+            self.text_colour = font_colour.get()
+
+        self.accessibility_win.destroy()
+        self.win.configure(bg=self.background_colour)
+        self.update_all_widgets()
 
     def device_scheduler(self):
         self.device_schedular_win = Toplevel(self.win)
@@ -520,6 +709,15 @@ def resize_image(image_path, width, height):
     image = PhotoImage(file=image_path)
     image = image.subsample(width, height)
     return image
+
+
+def ask_colour(colour, button):
+    colour_tuple = colorchooser.askcolor()
+
+    colour.set(colour_tuple[1] if colour_tuple[1] else colour.get())
+    button.configure(bg=colour.get(), fg="white" if colour.get() == "#000000" else "black")
+
+    return
 
 
 def main():
