@@ -1,4 +1,4 @@
-from backendChallenge import *
+from challenge.backendChallenge import *
 from tkinter import *
 
 
@@ -135,7 +135,7 @@ class SmartHomeSystem:
 
     def edit_device_button_clicked(self, i):
         self.edit_win = Toplevel(self.win)
-        self.edit_win.configure(bg="teal")
+        self.edit_win.configure(bg=self.background_colour)
 
         if isinstance(self.home.get_devices()[i], SmartPlug):
             consumption_rate_var = StringVar()
@@ -215,13 +215,13 @@ class SmartHomeSystem:
 
     def add_device_button_clicked(self):
         self.add_win = Toplevel(self.win)
-        self.add_win.configure(bg="teal", padx=10, pady=10)
+        self.add_win.configure(bg=self.background_colour, padx=10, pady=10)
 
         # Create light bulb image and resize to button size.
-        plug_image = PhotoImage(file="images/plug.png")
+        plug_image = PhotoImage(file="challenge/images/plug.png")
         plug_image = plug_image.subsample(plug_image.width() // 100, plug_image.height() // 100)
 
-        doorbell_image = PhotoImage(file="images/doorbell.png")
+        doorbell_image = PhotoImage(file="challenge/images/doorbell.png")
         doorbell_image = doorbell_image.subsample(doorbell_image.width() // 100, doorbell_image.height() // 100)
 
         add_question_label = Label(
