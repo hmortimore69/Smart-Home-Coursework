@@ -31,6 +31,7 @@ class SmartHomeSystem:
         # Initial colouring and styling
         self.background_colour = "#D3D3D3"
         self.widget_background_colour = "#b6b6b6"
+        self.button_colour = "#ffffff"
         self.text_colour = "black"
 
         self.font = "Ariel"
@@ -104,6 +105,7 @@ class SmartHomeSystem:
         turn_on_all_button = Button(
             self.main_frame,
             text="Turn On All Devices",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_on_all_button_clicked()
@@ -113,6 +115,7 @@ class SmartHomeSystem:
         turn_off_all_button = Button(
             self.main_frame,
             text="Turn Off All Devices",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_off_all_button_clicked()
@@ -122,6 +125,7 @@ class SmartHomeSystem:
         save_devices = Button(
             self.main_frame,
             text="Save Devices",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.save_device_list()
@@ -131,6 +135,7 @@ class SmartHomeSystem:
         load_devices = Button(
             self.main_frame,
             text="Load Devices",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.load_device_list()
@@ -140,6 +145,7 @@ class SmartHomeSystem:
         add_device = Button(
             self.main_frame,
             text="Add Device",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=self.add_device_button_clicked,
@@ -150,6 +156,7 @@ class SmartHomeSystem:
         clock_label = Label(
             self.main_frame,
             text="Time: 00:00",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final
         )
@@ -159,6 +166,7 @@ class SmartHomeSystem:
         open_schedule_win = Button(
             self.main_frame,
             text="Device Scheduler",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.device_scheduler(),
@@ -168,6 +176,7 @@ class SmartHomeSystem:
         open_accessibility_win = Button(
             self.main_frame,
             text="Accessibility Settings",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.accessibility_settings()
@@ -212,6 +221,8 @@ class SmartHomeSystem:
 
                 consumption_rate_edit = Spinbox(
                     self.create_widget_frame,
+                    bg=self.button_colour,
+                    fg=self.text_colour,
                     font=self.font_final,
                     from_=0,
                     to=150,
@@ -254,6 +265,7 @@ class SmartHomeSystem:
                 sleep_mode_edit = Button(
                     self.create_widget_frame,
                     text=f"Toggle Sleep Mode",
+                    bg=self.button_colour,
                     font=self.font_final,
                     fg=self.text_colour,
                     command=lambda n=i, row=curr_row, col=curr_col: self.toggle_sleep_mode_button_clicked(n, row, col)
@@ -306,6 +318,7 @@ class SmartHomeSystem:
         add_question_label = Label(
             self.add_win,
             text="Would you like to add a Smart Doorbell or a Smart Plug?",
+            bg=self.background_colour,
             fg=self.text_colour,
             font=self.font_final
         )
@@ -314,6 +327,7 @@ class SmartHomeSystem:
         add_smart_plug = Label(
             self.add_win,
             text="Smart Plug",
+            bg=self.background_colour,
             fg=self.text_colour,
             font=self.font_final
         )
@@ -322,6 +336,7 @@ class SmartHomeSystem:
         add_smart_doorbell = Label(
             self.add_win,
             text="Smart Doorbell",
+            bg=self.background_colour,
             fg=self.text_colour,
             font=self.font_final
         )
@@ -351,6 +366,7 @@ class SmartHomeSystem:
         rate_label = Label(
             self.add_win,
             text="Set Consumption Rate",
+            bg=self.background_colour,
             fg=self.text_colour,
             font=self.font_final
         )
@@ -359,6 +375,7 @@ class SmartHomeSystem:
         add_rate_spinbox = Spinbox(
             self.add_win,
             font=self.font_final,
+            bg=self.button_colour,
             from_=0,
             to=150,
             increment=1,
@@ -371,6 +388,7 @@ class SmartHomeSystem:
         rate_confirm_button = Button(
             self.add_win,
             text="Confirm",
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.confirm_new_plug(
@@ -525,6 +543,7 @@ class SmartHomeSystem:
 
         light_mode_button = Radiobutton(
             self.accessibility_win,
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             image=light_mode_image,
@@ -538,6 +557,7 @@ class SmartHomeSystem:
 
         dark_mode_button = Radiobutton(
             self.accessibility_win,
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             image=dark_mode_image,
@@ -551,6 +571,7 @@ class SmartHomeSystem:
 
         custom_mode_button = Radiobutton(
             self.accessibility_win,
+            bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
             image=slider_image,
@@ -565,6 +586,7 @@ class SmartHomeSystem:
         custom_background_label = Label(
             self.accessibility_win,
             text="Custom Background Colour:",
+            bg=self.background_colour,
             font=self.font_final,
             fg=self.text_colour
         )
@@ -582,6 +604,7 @@ class SmartHomeSystem:
             self.accessibility_win,
             text="Custom Accent Colour:",
             font=self.font_final,
+            bg=self.background_colour,
             fg=self.text_colour
         )
         custom_accent_label.grid(column=4, row=1, pady=10, padx=(10, 5), sticky="E")
@@ -596,6 +619,7 @@ class SmartHomeSystem:
 
         custom_text_colour_label = Label(
             self.accessibility_win,
+            bg=self.background_colour,
             font=self.font_final,
             fg=self.text_colour,
             text="Custom Text Colour:"
@@ -629,6 +653,7 @@ class SmartHomeSystem:
             self.accessibility_win,
             fg=self.text_colour,
             text="Apply Changes",
+            bg=self.button_colour,
             font=self.font_final,
 
             #  IDE screamed at me if I didn't do it like this for PEP8. D:
@@ -654,12 +679,14 @@ class SmartHomeSystem:
         if self.theme == "light":
             self.background_colour = "#D3D3D3"
             self.widget_background_colour = "#b6b6b6"
+            self.button_colour = "#ffffff"
             self.text_colour = "#000000"
 
         elif self.theme == "dark":
             self.background_colour = "#292E32"
             self.widget_background_colour = "#40474F"
-            self.text_colour = "#000000"
+            self.button_colour = "#434A51"
+            self.text_colour = "#ffffff"
 
         elif self.theme == "custom":
             self.background_colour = bg_colour.get()

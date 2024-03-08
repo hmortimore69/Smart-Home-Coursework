@@ -22,8 +22,7 @@ class SmartPlug(SmartDevice):
         self.consumption_rate = rate
 
     def add_to_schedule(self, time, option, value):
-        if 0 <= int(time) <= 23 and option.lower() in ["power", "rate"] and 0 <= value <= 150:
-            self.schedule.append([time, option, value])
+        self.schedule.append([time, option, value])
 
     def get_schedule(self):
         return self.schedule
