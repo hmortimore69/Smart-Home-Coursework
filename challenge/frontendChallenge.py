@@ -647,7 +647,9 @@ class SmartHomeSystem:
             self.text_colour = "#000000"
 
         elif self.theme == "dark":
-            pass
+            self.background_colour = "#292E32"
+            self.widget_background_colour = "#40474F"
+            self.text_colour = "#ffffff"
 
         elif self.theme == "custom":
             self.background_colour = bg_colour.get()
