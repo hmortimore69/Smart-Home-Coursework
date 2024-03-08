@@ -221,6 +221,7 @@ class SmartHomeSystem:
                     bg=self.button_colour,
                     fg=self.text_colour,
                     font=self.font_final,
+                    buttonbackground=self.button_colour,
                     from_=0,
                     to=150,
                     increment=1,
@@ -342,6 +343,7 @@ class SmartHomeSystem:
         plug_button = Button(
             self.add_win,
             image=self.plug_image,
+            bg=self.button_colour,
             width=100,
             height=100,
             command=lambda: self.add_plug_consumption()
@@ -352,6 +354,7 @@ class SmartHomeSystem:
         doorbell_button = Button(
             self.add_win,
             image=self.doorbell_image,
+            bg=self.button_colour,
             width=100,
             height=100,
             command=lambda: self.add_doorbell()
@@ -373,6 +376,8 @@ class SmartHomeSystem:
             self.add_win,
             font=self.font_final,
             bg=self.button_colour,
+            buttonbackground=self.button_colour,
+            fg=self.text_colour,
             from_=0,
             to=150,
             increment=1,
@@ -534,6 +539,7 @@ class SmartHomeSystem:
 
         custom_bg_colour.set(self.background_colour)
         custom_accent_colour.set(self.widget_background_colour)
+        custom_font_size.set(self.font_final[1])
         custom_text_colour.set(self.text_colour)
         theme_value.set(self.theme)
 
@@ -542,6 +548,7 @@ class SmartHomeSystem:
             bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
+            selectcolor=self.widget_background_colour,
             image=light_mode_image,
             compound="top",
             text="Light Mode",
@@ -555,6 +562,7 @@ class SmartHomeSystem:
             self.accessibility_win,
             bg=self.button_colour,
             fg=self.text_colour,
+            selectcolor=self.widget_background_colour,
             font=self.font_final,
             image=dark_mode_image,
             compound="top",
@@ -569,6 +577,7 @@ class SmartHomeSystem:
             self.accessibility_win,
             bg=self.button_colour,
             fg=self.text_colour,
+            selectcolor=self.widget_background_colour,
             font=self.font_final,
             image=slider_image,
             compound="top",
@@ -665,7 +674,7 @@ class SmartHomeSystem:
                 font_colour
             )
         )
-        apply_changes_button.grid(column=2, row=3, pady=10, padx=10, columnspan=3)
+        apply_changes_button.grid(column=2, row=3, pady=10, padx=10)
 
     def update_styling(self, theme, bg_colour, bg_accent, font_size, font_colour):
         self.theme = theme.get()
@@ -681,12 +690,13 @@ class SmartHomeSystem:
         elif self.theme == "dark":
             self.background_colour = "#292E32"
             self.widget_background_colour = "#40474F"
-            self.button_colour = "#434A51"
+            self.button_colour = "#5a636b"
             self.text_colour = "#ffffff"
 
         elif self.theme == "custom":
             self.background_colour = bg_colour.get()
             self.widget_background_colour = bg_accent.get()
+            self.button_colour = "#ffffff"
             self.text_colour = font_colour.get()
 
         self.accessibility_win.destroy()
