@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import colorchooser
+from tkinter import ttk
 
 
 class SmartHomeSystem:
@@ -16,7 +17,6 @@ class SmartHomeSystem:
         self.device_schedular_win = None
         self.add_win = None
         self.clock_callback = None
-        self.device_schedule = []
         self.theme = "light"
 
         self.win = Tk()
@@ -707,6 +707,29 @@ class SmartHomeSystem:
         self.device_schedular_win = Toplevel(self.win)
         self.device_schedular_win.config(bg=self.background_colour)
         self.device_schedular_win.resizable(False, False)
+
+        option_choices = [f"Device #{i + 1}: {device.name}" for i, device in enumerate(self.home.get_devices())]
+
+        option_menu = ttk.Combobox(
+            self.device_schedular_win,
+            values=option_choices,
+            state="readonly",
+        )
+        option_menu.grid(column=1, row=1)
+        option_menu.bind(
+            "<<ComboboxSelected>>",
+            lambda event, option=option_menu: self.load_device_schedule(option.get()))
+
+    def load_device_schedule(self, option):
+        chosen_option = str(option)
+        start_index = chosen_option.find("#") + 1
+        end_index = chosen_option.find(":", start_index)
+        device_index = int(chosen_option[start_index:end_index])
+
+        chosen_device = self.home.get_devices()[device_index]
+
+        for event in chosen_device.get_schedule():
+            print(event)
 
 
 def setup_home():

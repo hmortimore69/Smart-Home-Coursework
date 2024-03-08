@@ -13,6 +13,7 @@ class SmartDevice:
 class SmartPlug(SmartDevice):
     def __init__(self, consumption_rate):
         super().__init__()
+        self.name = "Smart Plug"
         self.consumption_rate = consumption_rate
 
     def get_consumption_rate(self) -> int:
@@ -28,16 +29,13 @@ class SmartPlug(SmartDevice):
         return self.schedule
 
     def __str__(self) -> str:
-        return f'''------
-Smart Plug
-------
-Switched On: {self.switched_on}
-Consumption Rate: {self.consumption_rate}'''
+        return f"\n------Smart Plug------\nSwitched On: {self.switched_on} \nConsumption Rate: {self.consumption_rate}"
 
 
 class SmartDoorBell(SmartDevice):
     def __init__(self):
         super().__init__()
+        self.name = "Smart Doorbell"
         self.sleepMode = False
 
     def get_option(self) -> bool:
@@ -49,13 +47,14 @@ class SmartDoorBell(SmartDevice):
     def toggle_option(self):
         self.sleepMode = not self.sleepMode
 
+    def add_to_schedule(self, time, option, value):
+        self.schedule.append([time, option, value])
+
+    def get_schedule(self):
+        return self.schedule
+
     def __str__(self) -> str:
-        return f'''------
-Smart Doorbell
-------
-Switched On: {self.switched_on}
-Sleep Mode: {self.sleepMode}
-'''
+        return f"------\nSmart Doorbell\n------\nSwitched On: {self.switched_on} \nSleep Mode: {self.sleepMode}"
 
 
 class SmartHome:
