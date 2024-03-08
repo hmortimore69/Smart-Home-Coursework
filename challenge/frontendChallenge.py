@@ -14,7 +14,6 @@ class SmartHomeSystem:
         self.create_widget_frame = None
         self.accessibility_win = None
         self.device_schedular_win = None
-        self.consumption_rate_window = None
         self.add_win = None
         self.clock_callback = None
         self.device_schedule = []
@@ -34,9 +33,7 @@ class SmartHomeSystem:
         self.button_colour = "#ffffff"
         self.text_colour = "black"
 
-        self.font = "Ariel"
-        self.font_size = 9
-        self.font_final = (self.font, self.font_size)
+        self.font_final = ("Ariel", 9)
 
         self.win.configure(bg=self.background_colour)
 
@@ -537,7 +534,6 @@ class SmartHomeSystem:
 
         custom_bg_colour.set(self.background_colour)
         custom_accent_colour.set(self.widget_background_colour)
-        custom_font_size.set(self.font_size)
         custom_text_colour.set(self.text_colour)
         theme_value.set(self.theme)
 
@@ -673,8 +669,8 @@ class SmartHomeSystem:
 
     def update_styling(self, theme, bg_colour, bg_accent, font_size, font_colour):
         self.theme = theme.get()
-        self.font_size = font_size.get()
-        self.font_final = (self.font, self.font_size)
+        font_size = font_size.get()
+        self.font_final = ("Ariel", font_size)
 
         if self.theme == "light":
             self.background_colour = "#D3D3D3"
