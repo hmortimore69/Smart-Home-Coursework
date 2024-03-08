@@ -16,7 +16,7 @@ class SmartHomeSystem:
         self.device_schedular_win = None
         self.consumption_rate_window = None
         self.add_win = None
-        self.clock_label = None
+        self.clock_callback = None
         self.device_schedule = []
         self.theme = "light"
 
@@ -78,12 +78,15 @@ class SmartHomeSystem:
         else:
             device_label["text"] = f"Status: {device_status}\n Consumption: {device.get_consumption_rate()}"
 
-    def update_clock(self):
-        time = self.clock_label.cget("text")[6:-3]
+    def update_clock(self, clock):
+        if not clock.winfo_exists():
+            return
+
+        time = clock.cget("text")[6:-3]
         time = f"{('0' if time == '23' else str(int(time) + 1)).zfill(2)}:00"
 
-        self.clock_label.config(text=f"Time: {time}")
-        self.win.after(3000, self.update_clock)
+        clock.config(text=f"Time: {time}")
+        self.win.after(3000, lambda: self.update_clock(clock))
 
     def create_interface_widgets(self):
         self.main_frame = Frame(self.win)
@@ -94,23 +97,27 @@ class SmartHomeSystem:
         self.create_widget_frame.grid(column=0, row=2, columnspan=5)
         self.create_widget_frame.configure(bg=self.widget_background_colour)
 
+        if self.clock_callback is not None:
+            self.win.after_cancel(self.clock_callback)
+            self.clock_callback = None
+
         turn_on_all_button = Button(
             self.main_frame,
-            text="Turn On All",
+            text="Turn On All Devices",
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_on_all_button_clicked()
         )
-        turn_on_all_button.grid(column=0, row=0, padx=(10, 0), pady=(0, 10))
+        turn_on_all_button.grid(column=0, row=0, padx=10, pady=(0, 10))
 
         turn_off_all_button = Button(
             self.main_frame,
-            text="Turn Off All",
+            text="Turn Off All Devices",
             fg=self.text_colour,
             font=self.font_final,
             command=lambda: self.turn_off_all_button_clicked()
         )
-        turn_off_all_button.grid(column=1, row=0, padx=(20, 0), pady=(0, 10))
+        turn_off_all_button.grid(column=1, row=0, padx=10, pady=(0, 10))
 
         save_devices = Button(
             self.main_frame,
@@ -140,14 +147,14 @@ class SmartHomeSystem:
         )
         add_device.grid(column=2, row=len(self.home.get_devices()) + 1, pady=(10, 0))
 
-        self.clock_label = Label(
+        clock_label = Label(
             self.main_frame,
             text="Time: 00:00",
             fg=self.text_colour,
             font=self.font_final
         )
-        self.clock_label.grid(column=2, row=0, pady=(0, 10))
-        self.clock_label.after(3000, self.update_clock)
+        clock_label.grid(column=2, row=0, pady=(0, 10))
+        self.clock_callback = self.win.after(3000, lambda: self.update_clock(clock_label))
 
         open_schedule_win = Button(
             self.main_frame,
@@ -519,6 +526,7 @@ class SmartHomeSystem:
         light_mode_button = Radiobutton(
             self.accessibility_win,
             fg=self.text_colour,
+            font=self.font_final,
             image=light_mode_image,
             compound="top",
             text="Light Mode",
@@ -531,6 +539,7 @@ class SmartHomeSystem:
         dark_mode_button = Radiobutton(
             self.accessibility_win,
             fg=self.text_colour,
+            font=self.font_final,
             image=dark_mode_image,
             compound="top",
             text="Dark Mode",
@@ -543,6 +552,7 @@ class SmartHomeSystem:
         custom_mode_button = Radiobutton(
             self.accessibility_win,
             fg=self.text_colour,
+            font=self.font_final,
             image=slider_image,
             compound="top",
             text="Custom",
@@ -606,7 +616,7 @@ class SmartHomeSystem:
             fg=self.text_colour,
             label="Font Size:",
             bd=0,
-            bg=self.background_colour,
+            bg=self.widget_background_colour,
             from_=5,
             to=15,
             length=300,
@@ -649,7 +659,7 @@ class SmartHomeSystem:
         elif self.theme == "dark":
             self.background_colour = "#292E32"
             self.widget_background_colour = "#40474F"
-            self.text_colour = "#ffffff"
+            self.text_colour = "#000000"
 
         elif self.theme == "custom":
             self.background_colour = bg_colour.get()
