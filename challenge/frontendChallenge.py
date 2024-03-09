@@ -35,6 +35,19 @@ class SmartHomeSystem:
 
         self.font_final = ("Ariel", 9)
 
+        style = ttk.Style()  # Change combobox styling for later on to prevent duplicate themes.
+        style.theme_create('custom_style', parent='alt', settings={
+            'TCombobox': {
+                'configure': {
+                    'selectbackground': self.widget_background_colour,
+                    'selectforeground': self.text_colour,
+                    'fieldbackground': self.widget_background_colour,
+                    'foreground': self.button_colour
+                }
+            }
+        })
+        style.theme_use('custom_style')
+
         self.win.configure(bg=self.background_colour)
 
         self.win.resizable(False, False)
@@ -72,7 +85,8 @@ class SmartHomeSystem:
         delete_icon_background["bg"] = device_image_colour
 
         if isinstance(device, SmartDoorBell):
-            device_label["text"] = f"Status: {device_status}\n Sleep Mode: {device.get_option()}"
+            device_option_status = "On" if self.home.get_devices()[i].get_option() else "Off"
+            device_label["text"] = f"Status: {device_status}\n Sleep Mode: {device_option_status}"
         else:
             device_label["text"] = f"Status: {device_status}\n Consumption: {device.get_consumption_rate()}"
 
@@ -239,6 +253,8 @@ class SmartHomeSystem:
                 consumption_rate_edit.grid(column=curr_col, row=curr_row + 2, padx=10, pady=(0, 10))
 
             else:  # Else enters if the device is a doorbell.
+                device_option_status = "On" if device.get_option() else "Off"
+
                 doorbell_button = Button(
                     self.create_widget_frame,
                     image=self.doorbell_image,
@@ -253,7 +269,7 @@ class SmartHomeSystem:
 
                 device_label = Label(
                     self.create_widget_frame,
-                    text=f"Status: {device_status}\n Sleep Mode: {device.get_option()}",
+                    text=f"Status: {device_status}\n Sleep Mode: {device_option_status}",
                     fg=self.text_colour,
                     font=self.font_final
                 )
@@ -704,32 +720,89 @@ class SmartHomeSystem:
         self.update_all_widgets()
 
     def device_scheduler(self):
+        def update_add_event_button():
+            add_event_to_schedule.configure(state="disabled" if option_menu.get() else "normal")
+
         self.device_schedular_win = Toplevel(self.win)
         self.device_schedular_win.config(bg=self.background_colour)
         self.device_schedular_win.resizable(False, False)
 
+        current_schedule_frame = Frame(self.device_schedular_win)
+        current_schedule_frame.grid(column=3, row=1, padx=10, sticky="N")
+        current_schedule_frame.configure(background=self.widget_background_colour)
+
         option_choices = [f"Device #{i + 1}: {device.name}" for i, device in enumerate(self.home.get_devices())]
+
+        choose_option = Label(
+            self.device_schedular_win,
+            text="Choose A Device:",
+            font=self.font_final,
+            fg=self.text_colour,
+            bg=self.background_colour
+        )
+        choose_option.grid(column=1, row=0, padx=10, pady=(10, 2), sticky="SW")
 
         option_menu = ttk.Combobox(
             self.device_schedular_win,
             values=option_choices,
+            width=21,
             state="readonly",
+            font=self.font_final,
+            validate="all",
+            validatecommand=update_add_event_button,
+            style='TCombobox'  # Use the custom style for the combobox
         )
-        option_menu.grid(column=1, row=1)
+        option_menu.grid(column=1, row=1, padx=10, pady=(0, 10))
         option_menu.bind(
             "<<ComboboxSelected>>",
-            lambda event, option=option_menu: self.load_device_schedule(option.get()))
+            lambda event: self.load_device_schedule(current_schedule_frame, option_menu.get())
+        )
 
-    def load_device_schedule(self, option):
-        chosen_option = str(option)
-        start_index = chosen_option.find("#") + 1
-        end_index = chosen_option.find(":", start_index)
-        device_index = int(chosen_option[start_index:end_index])
+        add_event_to_schedule = Button(
+            self.device_schedular_win,
+            text="Add Event",
+            font=self.font_final,
+            fg=self.text_colour,
+            bg=self.background_colour,
+            state="disabled",
+            command=lambda: self.add_event_to_schedule(option_menu.get())
+        )
+        add_event_to_schedule.grid(column=1, row=3, padx=10, pady=(0, 10))
 
-        chosen_device = self.home.get_devices()[device_index]
+    def get_device_from_combobox(self, option):
+        start_index = option.find("#") + 1
+        end_index = option.find(":", start_index)
+        device_index = int(option[start_index:end_index]) - 1
+        device = self.home.get_devices()[device_index]
 
-        for event in chosen_device.get_schedule():
-            print(event)
+        return device
+
+    def load_device_schedule(self, frame, option):
+        chosen_device = self.get_device_from_combobox(option)
+        device_schedule = chosen_device.get_schedule()
+
+        curr_row = 0
+        curr_col = 0
+
+        if not device_schedule:
+            empty_schedule = Label(
+                frame,
+                text="Empty Device Schedule",
+                font=self.font_final,
+                fg=self.text_colour,
+                background=self.background_colour
+            )
+            empty_schedule.grid(column=1, row=1)
+
+        for i, device in enumerate(device_schedule):
+            if i % 7 == 0:
+                curr_row += 4
+                curr_col = 0
+
+    def add_event_to_schedule(self, option):
+        chosen_device = self.get_device_from_combobox(option)
+
+
 
 
 def setup_home():
