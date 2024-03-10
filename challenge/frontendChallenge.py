@@ -1053,7 +1053,7 @@ Add 5 devices by referencing their index.''')
             rate = input("Please enter the consumption rate of your smart plug: ")
 
             while not rate.isdigit() or int(rate) < 0 or int(rate) > 150:
-                print("Invalid argument. Please enter a valid number.")
+                print("Invalid argument. Please enter a valid number between 0 and 150.")
                 rate = input("Please enter the consumption rate of your smart plug: ")
 
             print(f"Added a Smart Plug device with a consumption rate of {rate}.")

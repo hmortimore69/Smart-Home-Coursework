@@ -38,7 +38,7 @@ class SmartHomeSystem:
 
     def update_clock(self):
         time = self.clock_label.cget("text")[6:-3]
-        time = f"{"0" if time == "23" else str(int(time) + 1).zfill(2)}:00"
+        time = f"{'0' if time == '23' else str(int(time) + 1).zfill(2)}:00"
 
         self.clock_label.config(text=f"Time: {time}")
         self.win.after(3000, self.update_clock)
@@ -324,7 +324,7 @@ Add 5 devices by referencing their index.''')
             rate = input("Please enter the consumption rate of your smart plug: ")
 
             while not rate.isdigit() or int(rate) < 0 or int(rate) > 150:
-                print("Invalid argument. Please enter a valid number.")
+                print("Invalid argument. Please enter a valid number between 0 and 150.")
                 rate = input("Please enter the consumption rate of your smart plug: ")
 
             print(f"Added a Smart Plug device with a consumption rate of {rate}.")
