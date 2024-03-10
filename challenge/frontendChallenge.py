@@ -27,9 +27,9 @@ class SmartHomeSystem:
         self.win.title("Smart Home System")
 
         # Create all images and resize to appropriate sizes.
-        self.plug_image = resize_image("images/plug.png", 6, 6)
-        self.doorbell_image = resize_image("images/doorbell.png", 3, 3)
-        self.delete_image = resize_image("images/cross.png", 26, 26)
+        self.plug_image = resize_image("challenge/images/plug.png", 6, 6)
+        self.doorbell_image = resize_image("challenge/images/doorbell.png", 3, 3)
+        self.delete_image = resize_image("challenge/images/cross.png", 26, 26)
 
         # Initial colouring and styling
         self.background_colour = "#D3D3D3"
