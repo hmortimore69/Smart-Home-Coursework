@@ -21,15 +21,16 @@ class SmartHomeSystem:
         self.current_schedule_frame = None
 
         self.clock_callback = None
+        self.curr_time = "00:00"
         self.theme = "light"
 
         self.win = Tk()
         self.win.title("Smart Home System")
 
         # Create all images and resize to appropriate sizes.
-        self.plug_image = resize_image("challenge/images/plug.png", 6, 6)
-        self.doorbell_image = resize_image("challenge/images/doorbell.png", 3, 3)
-        self.delete_image = resize_image("challenge/images/cross.png", 26, 26)
+        self.plug_image = resize_image("images/plug.png", 6, 6)
+        self.doorbell_image = resize_image("images/doorbell.png", 3, 3)
+        self.delete_image = resize_image("images/cross.png", 26, 26)
 
         # Initial colouring and styling
         self.background_colour = "#D3D3D3"
@@ -99,9 +100,9 @@ class SmartHomeSystem:
             return
 
         time = clock.cget("text")[6:-3]
-        time = f"{('0' if time == '23' else str(int(time) + 1)).zfill(2)}:00"
+        self.curr_time = f"{('0' if time == '23' else str(int(time) + 1)).zfill(2)}:00"
 
-        clock.config(text=f"Time: {time}")
+        clock.config(text=f"Time: {self.curr_time}")
 
         for i, device in enumerate(self.home.get_devices()):
             for event in device.get_schedule():
@@ -186,7 +187,7 @@ class SmartHomeSystem:
 
         clock_label = Label(
             self.main_frame,
-            text="Time: 00:00",
+            text=f"Time: {self.curr_time}",
             bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final
