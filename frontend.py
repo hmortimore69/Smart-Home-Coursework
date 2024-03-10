@@ -1,4 +1,4 @@
-from challenge.backendChallenge import *
+from backend import *
 from tkinter import *
 
 
