@@ -36,17 +36,18 @@ class SmartHomeSystem:
         self.font_final = ("Ariel", 9)
 
         style = ttk.Style()  # Change combobox styling for later on to prevent duplicate themes.
-        style.theme_create('custom_style', parent='alt', settings={
-            'TCombobox': {
-                'configure': {
-                    'selectbackground': self.widget_background_colour,
-                    'selectforeground': self.text_colour,
-                    'fieldbackground': self.widget_background_colour,
-                    'foreground': self.button_colour
+        style.theme_create("custom_style", parent="alt", settings={
+            "TCombobox": {
+                "configure": {
+                    "selectbackground": self.widget_background_colour,
+                    "selectforeground": self.text_colour,
+                    "fieldbackground": self.widget_background_colour,
+                    "foreground": self.button_colour,
+                    "readonlybackground": self.widget_background_colour
                 }
             }
         })
-        style.theme_use('custom_style')
+        style.theme_use("custom_style")
 
         self.win.configure(bg=self.background_colour)
 
@@ -435,7 +436,7 @@ class SmartHomeSystem:
             defaultextension=".csv",
             initialdir="./saves",
             parent=self.win,
-            filetypes=[('CSV Files', '*.csv')]
+            filetypes=[("CSV Files", "*.csv")]
         )
 
         if not file_save_location:
@@ -462,8 +463,8 @@ class SmartHomeSystem:
                         ])
 
                 for row in devices_to_save:
-                    row_device = ','.join(map(str, row))
-                    file.write(row_device + '\n')
+                    row_device = ",".join(map(str, row))
+                    file.write(row_device + "\n")
 
         except PermissionError:
             messagebox.showinfo(
@@ -476,16 +477,16 @@ class SmartHomeSystem:
             defaultextension=".csv",
             initialdir="./saves",
             parent=self.win,
-            filetypes=[('CSV Files', '*.csv')]
+            filetypes=[("CSV Files", "*.csv")]
         )
 
         if not file_load_location:
             return
 
         with open(file_load_location, "r") as file:
-            devices_to_load = [line.strip().split(',') for line in file]
+            devices_to_load = [line.strip().split(",") for line in file]
 
-        if devices_to_load == [['']]:
+        if devices_to_load == [[""]]:
             messagebox.showinfo(
                 "Uh Oh! :(",
                 "Empty File. Please select a valid device file."
@@ -750,7 +751,7 @@ class SmartHomeSystem:
             font=self.font_final,
             validate="all",
             validatecommand=update_add_event_button,
-            style='TCombobox'  # Use the custom style for the combobox
+            style="TCombobox"  # Use the custom style for the combobox
         )
         option_menu.grid(column=1, row=1, padx=10, pady=(0, 10))
         option_menu.bind(
@@ -787,7 +788,7 @@ class SmartHomeSystem:
         if not device_schedule:
             empty_schedule = Label(
                 frame,
-                text="Empty Device Schedule",
+                text="The Device's Schedule Is Empty.",
                 font=self.font_final,
                 fg=self.text_colour,
                 background=self.background_colour
@@ -804,20 +805,78 @@ class SmartHomeSystem:
         add_event_win.configure(bg=self.background_colour)
         add_event_win.resizable(width=False, height=False)
 
+        add_event_frame = Frame(add_event_win)
+        add_event_frame.configure(background=self.widget_background_colour)
+        add_event_frame.grid(column=1, row=1, padx=10, pady=10)
+
+        set_power_var = BooleanVar()
         chosen_device = self.get_device_from_combobox(option)
 
+        set_power_var.set(False)
+
+        hours_label = Label(
+            add_event_frame,
+            text="Select the time for the event:",
+            font=self.font_final,
+            fg=self.text_colour,
+            background=self.widget_background_colour
+        )
+        hours_label.grid(column=1, row=2, padx=10, pady=(10, 0))
+
+        hours_combobox = ttk.Combobox(
+            add_event_frame,
+            values=[f"{str(i).zfill(2)}:00" for i in range(0, 24)],
+            state="readonly"
+        )
+        hours_combobox.grid(column=1, row=3, padx=10, pady=10)
+        hours_combobox.current(0)
+
+        set_power_label = Label(
+            add_event_frame,
+            text="Device Power:",
+            font=self.font_final,
+            fg=self.text_colour,
+            background=self.widget_background_colour
+        )
+        set_power_label.grid(column=3, row=2, padx=10, pady=(10, 0))
+
+        set_power_on = Radiobutton(
+            add_event_frame,
+            text="On",
+            variable=set_power_var,
+            value=True,
+            font=self.font_final,
+            fg=self.text_colour,
+            bg=self.button_colour,
+            selectcolor=self.widget_background_colour,
+
+        )
+        set_power_on.grid(column=3, row=3, padx=(0, 50))
+
+        set_power_off = Radiobutton(
+            add_event_frame,
+            text="Off",
+            variable=set_power_var,
+            value=False,
+            font=self.font_final,
+            fg=self.text_colour,
+            bg=self.button_colour,
+            selectcolor=self.widget_background_colour,
+        )
+        set_power_off.grid(column=3, row=3, padx=(50, 0))
+
         if isinstance(chosen_device, SmartPlug):
-            rate_label = Label(
-                add_event_win,
+            set_event_rate_label = Label(
+                add_event_frame,
                 text="Set Consumption Rate",
-                bg=self.background_colour,
+                bg=self.widget_background_colour,
                 fg=self.text_colour,
                 font=self.font_final
             )
-            rate_label.grid(column=1, row=3, pady=(10, 0))
+            set_event_rate_label.grid(column=5, row=2, padx=10, pady=(10, 0))
 
-            add_rate_spinbox = Spinbox(
-                add_event_win,
+            set_event_rate_spinbox = Spinbox(
+                add_event_frame,
                 font=self.font_final,
                 bg=self.button_colour,
                 buttonbackground=self.button_colour,
@@ -829,21 +888,54 @@ class SmartHomeSystem:
                 validate="key",
                 validatecommand=(add_event_win.register(validate_consumption_rate_entry), "%P")
             )
-            add_rate_spinbox.grid(column=1, row=5, pady=(10, 0))
+            set_event_rate_spinbox.grid(column=5, row=3, padx=10)
 
-            rate_confirm_button = Button(
-                add_event_win,
-                text="Confirm",
-                bg=self.button_colour,
+        else:
+            sleep_mode_var = BooleanVar()
+            sleep_mode_var.set(False)
+
+            set_event_sleep_mode_label = Label(
+                add_event_frame,
+                text="Set Sleep Mode Value:",
+                bg=self.widget_background_colour,
                 fg=self.text_colour,
-                font=self.font_final,
-                command=lambda: self.confirm_new_plug(
-                    add_rate_spinbox,
-                    rate_label,
-                    rate_confirm_button
-                )
+                font=self.font_final
             )
-            rate_confirm_button.grid(column=1, row=6, pady=(10, 0))
+            set_event_sleep_mode_label.grid(column=5, row=2, padx=10, pady=(10, 0))
+
+            set_event_sleep_mode_on = Radiobutton(
+                add_event_frame,
+                text="On",
+                variable=sleep_mode_var,
+                value=True,
+                font=self.font_final,
+                fg=self.text_colour,
+                bg=self.button_colour,
+                selectcolor=self.widget_background_colour,
+
+            )
+            set_event_sleep_mode_on.grid(column=5, row=3, padx=(0, 50))
+
+            set_event_sleep_mode_off = Radiobutton(
+                add_event_frame,
+                text="Off",
+                variable=sleep_mode_var,
+                value=False,
+                font=self.font_final,
+                fg=self.text_colour,
+                bg=self.button_colour,
+                selectcolor=self.widget_background_colour,
+            )
+            set_event_sleep_mode_off.grid(column=5, row=3, padx=(50, 0))
+
+        event_confirm_button = Button(
+            add_event_frame,
+            text="Confirm",
+            bg=self.button_colour,
+            fg=self.text_colour,
+            font=self.font_final,
+        )
+        event_confirm_button.grid(column=1, row=6, padx=10, pady=10)
 
 
 def setup_home():

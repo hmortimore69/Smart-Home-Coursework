@@ -47,8 +47,8 @@ class SmartDoorBell(SmartDevice):
     def toggle_option(self):
         self.sleepMode = not self.sleepMode
 
-    def add_to_schedule(self, time, option, value):
-        self.schedule.append([time, option, value])
+    def add_to_schedule(self, event):
+        self.schedule.append(event)
 
     def get_schedule(self):
         return self.schedule
