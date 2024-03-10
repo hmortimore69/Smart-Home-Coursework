@@ -745,7 +745,7 @@ class SmartHomeSystem:
         option_menu = ttk.Combobox(
             self.device_schedular_win,
             values=option_choices,
-            width=21,
+            width=23,
             state="readonly",
             font=self.font_final,
             validate="all",
@@ -800,9 +800,50 @@ class SmartHomeSystem:
                 curr_col = 0
 
     def add_event_to_schedule(self, option):
+        add_event_win = Toplevel(self.device_schedular_win)
+        add_event_win.configure(bg=self.background_colour)
+        add_event_win.resizable(width=False, height=False)
+
         chosen_device = self.get_device_from_combobox(option)
 
+        if isinstance(chosen_device, SmartPlug):
+            rate_label = Label(
+                add_event_win,
+                text="Set Consumption Rate",
+                bg=self.background_colour,
+                fg=self.text_colour,
+                font=self.font_final
+            )
+            rate_label.grid(column=1, row=3, pady=(10, 0))
 
+            add_rate_spinbox = Spinbox(
+                add_event_win,
+                font=self.font_final,
+                bg=self.button_colour,
+                buttonbackground=self.button_colour,
+                fg=self.text_colour,
+                from_=0,
+                to=150,
+                increment=1,
+                width=4,
+                validate="key",
+                validatecommand=(add_event_win.register(validate_consumption_rate_entry), "%P")
+            )
+            add_rate_spinbox.grid(column=1, row=5, pady=(10, 0))
+
+            rate_confirm_button = Button(
+                add_event_win,
+                text="Confirm",
+                bg=self.button_colour,
+                fg=self.text_colour,
+                font=self.font_final,
+                command=lambda: self.confirm_new_plug(
+                    add_rate_spinbox,
+                    rate_label,
+                    rate_confirm_button
+                )
+            )
+            rate_confirm_button.grid(column=1, row=6, pady=(10, 0))
 
 
 def setup_home():
