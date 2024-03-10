@@ -533,7 +533,7 @@ class SmartHomeSystem:
                     if option1 == "true":
                         new_device.toggle_switch()
 
-                elif device_class == "Doorbell" and option1 == option2 and option1 in ["true", "false"]:
+                elif device_class == "Doorbell" and option1 in ["true", "false"] and option2 in ["true", "false"]:
                     new_device = SmartDoorBell()
                     temp_new_devices.append(new_device)
 
