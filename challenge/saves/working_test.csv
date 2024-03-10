@@ -1,9 +1,9 @@
 Plug,False,150
+Doorbell,True,False
 Doorbell,False,False
+Doorbell,False,True
+Doorbell,True,True
 Doorbell,False,False
+Doorbell,False,True
 Doorbell,False,False
-Doorbell,False,False
-Doorbell,False,False
-Doorbell,False,False
-Doorbell,False,False
-Plug,False,150
+Plug,True,150
