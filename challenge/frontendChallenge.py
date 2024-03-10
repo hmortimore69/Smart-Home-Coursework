@@ -696,18 +696,12 @@ class SmartHomeSystem:
             text="Apply Changes",
             bg=self.button_colour,
             font=self.font_final,
-
-            #  IDE screamed at me if I didn't do it like this for PEP8. D:
-            command=lambda theme=theme_value,
-            bg_colour=custom_bg_colour,
-            bg_accent=custom_accent_colour,
-            font_size=custom_font_size,
-            font_colour=custom_text_colour: self.update_styling(
-                theme,
-                bg_colour,
-                bg_accent,
-                font_size,
-                font_colour
+            command=lambda: self.update_styling(
+                theme_value,
+                custom_bg_colour,
+                custom_accent_colour,
+                custom_font_size,
+                custom_text_colour
             )
         )
         apply_changes_button.grid(column=2, row=3, pady=10, padx=10)
@@ -744,6 +738,8 @@ class SmartHomeSystem:
         self.device_schedular_win.config(bg=self.background_colour)
         self.device_schedular_win.resizable(False, False)
 
+        self.device_schedular_win.rowconfigure(0, weight=1)
+
         self.current_schedule_frame = Frame(self.device_schedular_win)
         self.current_schedule_frame.grid(column=3, row=1, padx=10, sticky="N")
         self.current_schedule_frame.configure(bg=self.widget_background_colour)
@@ -775,15 +771,25 @@ class SmartHomeSystem:
         option_menu.current(0)
         self.load_device_schedule(self.current_schedule_frame, option_menu.get())
 
-        add_event_to_schedule = Button(
+        add_event_win_button = Button(
             self.device_schedular_win,
             text="Add Event",
             font=self.font_final,
             fg=self.text_colour,
-            bg=self.background_colour,
+            bg=self.button_colour,
             command=lambda: self.add_event_button_pressed(option_menu.get())
         )
-        add_event_to_schedule.grid(column=1, row=3, padx=10, pady=(0, 10))
+        add_event_win_button.grid(column=1, row=2, padx=10, pady=10)
+
+        clear_events_win_button = Button(
+            self.device_schedular_win,
+            text="Clear Events",
+            font=self.font_final,
+            fg=self.text_colour,
+            bg=self.button_colour,
+            command=lambda: self.clear_events_button_pressed(option_menu.get())
+        )
+        clear_events_win_button.grid(column=3, row=2, padx=10, pady=10)
 
         device_schedule_title_label = Label(
             self.device_schedular_win,
@@ -810,14 +816,14 @@ class SmartHomeSystem:
         device_schedule = chosen_device.get_schedule()
 
         if not device_schedule:
-            empty_schedule = Label(
+            empty_schedule_label = Label(
                 frame,
                 text="The Device's Schedule Is Empty.",
                 font=self.font_final,
                 fg=self.text_colour,
                 background=self.widget_background_colour
             )
-            empty_schedule.grid(column=1, row=1, padx=10, pady=10)
+            empty_schedule_label.grid(column=1, row=1, padx=10, pady=10)
 
         for i, event in enumerate(device_schedule):
             label_text = f"Time: {event[0]}, Power: {'On' if event[1] else 'Off'}"
@@ -835,7 +841,19 @@ class SmartHomeSystem:
                 fg=self.text_colour,
                 background=self.widget_background_colour
             )
-            event_display_label.grid(column=1, row=i, padx=10, pady=10)
+            event_display_label.grid(column=1, row=i, padx=(10, 25), pady=10)
+
+            remove_event = Button(
+                frame,
+                bg=self.widget_background_colour,
+                image=self.delete_image,
+                width=10,
+                height=10,
+                relief="flat",
+                command=lambda n=i: self.remove_single_event(chosen_device, n)
+            )
+            remove_event.image = self.delete_image
+            remove_event.grid(column=1, row=i, padx=5, sticky="E")
 
     def add_event_button_pressed(self, option):
         self.add_event_win = Toplevel(self.device_schedular_win)
@@ -843,7 +861,7 @@ class SmartHomeSystem:
         self.add_event_win.resizable(width=False, height=False)
 
         add_event_frame = Frame(self.add_event_win)
-        add_event_frame.configure(background=self.widget_background_colour)
+        add_event_frame.configure(background=self.background_colour)
         add_event_frame.grid(column=1, row=1, padx=10, pady=10)
 
         set_power_var = BooleanVar()
@@ -856,14 +874,16 @@ class SmartHomeSystem:
             text="Select the time for the event:",
             font=self.font_final,
             fg=self.text_colour,
-            background=self.widget_background_colour
+            background=self.background_colour
         )
         hours_label.grid(column=1, row=2, padx=10, pady=(10, 0))
 
         hours_combobox = ttk.Combobox(
             add_event_frame,
             values=[f"{str(i).zfill(2)}:00" for i in range(0, 24)],
-            state="readonly"
+            state="readonly",
+            font=self.font_final,
+            style="TCombobox"
         )
         hours_combobox.grid(column=1, row=3, padx=10, pady=10)
         hours_combobox.current(0)
@@ -873,7 +893,7 @@ class SmartHomeSystem:
             text="Device Power:",
             font=self.font_final,
             fg=self.text_colour,
-            background=self.widget_background_colour
+            background=self.background_colour
         )
         set_power_label.grid(column=3, row=2, padx=10, pady=(10, 0))
 
@@ -886,9 +906,8 @@ class SmartHomeSystem:
             fg=self.text_colour,
             bg=self.button_colour,
             selectcolor=self.widget_background_colour,
-
         )
-        set_power_on.grid(column=3, row=3, padx=(0, 50))
+        set_power_on.grid(column=3, row=3)
 
         set_power_off = Radiobutton(
             add_event_frame,
@@ -900,13 +919,13 @@ class SmartHomeSystem:
             bg=self.button_colour,
             selectcolor=self.widget_background_colour,
         )
-        set_power_off.grid(column=3, row=3, padx=(50, 0))
+        set_power_off.grid(column=3, row=4)
 
         if isinstance(chosen_device, SmartPlug):
             set_event_rate_label = Label(
                 add_event_frame,
-                text="Set Consumption Rate",
-                bg=self.widget_background_colour,
+                text="Consumption Rate:",
+                bg=self.background_colour,
                 fg=self.text_colour,
                 font=self.font_final
             )
@@ -933,8 +952,8 @@ class SmartHomeSystem:
 
             set_event_sleep_mode_label = Label(
                 add_event_frame,
-                text="Set Sleep Mode Value:",
-                bg=self.widget_background_colour,
+                text="Sleep Mode:",
+                bg=self.background_colour,
                 fg=self.text_colour,
                 font=self.font_final
             )
@@ -949,9 +968,8 @@ class SmartHomeSystem:
                 fg=self.text_colour,
                 bg=self.button_colour,
                 selectcolor=self.widget_background_colour,
-
             )
-            set_event_sleep_mode_on.grid(column=5, row=3, padx=(0, 50))
+            set_event_sleep_mode_on.grid(column=5, row=3)
 
             set_event_sleep_mode_off = Radiobutton(
                 add_event_frame,
@@ -963,7 +981,7 @@ class SmartHomeSystem:
                 bg=self.button_colour,
                 selectcolor=self.widget_background_colour,
             )
-            set_event_sleep_mode_off.grid(column=5, row=3, padx=(50, 0))
+            set_event_sleep_mode_off.grid(column=5, row=4)
 
         event_confirm_button = Button(
             add_event_frame,
@@ -971,14 +989,12 @@ class SmartHomeSystem:
             bg=self.button_colour,
             fg=self.text_colour,
             font=self.font_final,
-
-            #  It's all one command
             command=lambda: self.add_event(
-                time=hours_combobox.get(),
-                power=set_power_var.get(),
-                consumption_rate=set_event_rate_spinbox.get() if isinstance(chosen_device, SmartPlug) else None,
-                sleep_mode=sleep_mode_var.get() if isinstance(chosen_device, SmartDoorBell) else None,
-                chosen_device=chosen_device
+                hours_combobox.get(),
+                set_power_var.get(),
+                set_event_rate_spinbox.get() if isinstance(chosen_device, SmartPlug) else None,
+                sleep_mode_var.get() if isinstance(chosen_device, SmartDoorBell) else None,
+                chosen_device
             )
         )
         event_confirm_button.grid(column=1, row=6, padx=10, pady=10)
@@ -997,6 +1013,23 @@ class SmartHomeSystem:
         self.load_device_schedule(
             self.current_schedule_frame,
             f"Device #{self.home.get_devices().index(chosen_device)+1}:"
+        )
+
+    def clear_events_button_pressed(self, option):
+        device = self.get_device_from_combobox(option)
+        device.schedule = []
+
+        self.load_device_schedule(
+            self.current_schedule_frame,
+            f"Device #{self.home.get_devices().index(device)+1}:"
+        )
+
+    def remove_single_event(self, device, i):
+        device.schedule.pop(i)
+
+        self.load_device_schedule(
+            self.current_schedule_frame,
+            f"Device #{self.home.get_devices().index(device)+1}:"
         )
 
 
