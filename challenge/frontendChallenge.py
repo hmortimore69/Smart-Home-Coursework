@@ -12,7 +12,7 @@ class SmartHomeSystem:
 
         # Initialise all objects needed for future assignment and manipulation
         self.accessibility_win = None
-        self.device_schedular_win = None
+        self.device_scheduler_win = None
         self.add_event_win = None
         self.add_win = None
         self.win = Tk()
@@ -735,20 +735,20 @@ class SmartHomeSystem:
         self.update_all_widgets()
 
     def device_scheduler(self):
-        self.device_schedular_win = Toplevel(self.win)
-        self.device_schedular_win.config(bg=self.background_colour)
-        self.device_schedular_win.resizable(False, False)
+        self.device_scheduler_win = Toplevel(self.win)
+        self.device_scheduler_win.config(bg=self.background_colour)
+        self.device_scheduler_win.resizable(False, False)
 
-        self.device_schedular_win.rowconfigure(0, weight=1)
+        self.device_scheduler_win.rowconfigure(0, weight=1)
 
-        self.current_schedule_frame = Frame(self.device_schedular_win)
+        self.current_schedule_frame = Frame(self.device_scheduler_win)
         self.current_schedule_frame.grid(column=3, row=1, padx=10, sticky="N")
         self.current_schedule_frame.configure(bg=self.widget_background_colour)
 
         option_choices = [f"Device #{i + 1}: {device.name}" for i, device in enumerate(self.home.get_devices())]
 
         choose_option = Label(
-            self.device_schedular_win,
+            self.device_scheduler_win,
             text="Choose A Device:",
             font=self.font_final,
             fg=self.text_colour,
@@ -757,7 +757,7 @@ class SmartHomeSystem:
         choose_option.grid(column=1, row=0, padx=10, pady=(10, 2), sticky="SW")
 
         option_menu = ttk.Combobox(
-            self.device_schedular_win,
+            self.device_scheduler_win,
             values=option_choices,
             width=23,
             state="readonly",
@@ -773,7 +773,7 @@ class SmartHomeSystem:
         self.load_device_schedule(self.current_schedule_frame, option_menu.get())
 
         add_event_win_button = Button(
-            self.device_schedular_win,
+            self.device_scheduler_win,
             text="Add Event",
             font=self.font_final,
             fg=self.text_colour,
@@ -783,7 +783,7 @@ class SmartHomeSystem:
         add_event_win_button.grid(column=1, row=2, padx=10, pady=10)
 
         clear_events_win_button = Button(
-            self.device_schedular_win,
+            self.device_scheduler_win,
             text="Clear Events",
             font=self.font_final,
             fg=self.text_colour,
@@ -793,7 +793,7 @@ class SmartHomeSystem:
         clear_events_win_button.grid(column=3, row=2, padx=10, pady=10)
 
         device_schedule_title_label = Label(
-            self.device_schedular_win,
+            self.device_scheduler_win,
             text="Device Schedule:",
             font=self.font_final,
             fg=self.text_colour,
@@ -857,7 +857,7 @@ class SmartHomeSystem:
             remove_event.grid(column=1, row=i, padx=5, sticky="E")
 
     def add_event_button_pressed(self, option):
-        self.add_event_win = Toplevel(self.device_schedular_win)
+        self.add_event_win = Toplevel(self.device_scheduler_win)
         self.add_event_win.configure(bg=self.background_colour)
         self.add_event_win.resizable(width=False, height=False)
 
