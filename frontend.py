@@ -9,9 +9,8 @@ class SmartHomeSystem:
         # Initialise all objects needed for future assignment and manipulation
         self.edit_win = None
         self.add_win = None
-        self.clock_label = None
-
         self.win = Tk()
+
         self.win.title("Smart Home System")
 
         self.main_frame = Frame(self.win)
@@ -31,17 +30,9 @@ class SmartHomeSystem:
     def update_widgets(self):
         # Clear the mainFrame
         for child in self.main_frame.winfo_children():
-            if child != self.clock_label:
-                child.destroy()
+            child.destroy()
 
         self.create_widgets()
-
-    def update_clock(self):
-        time = self.clock_label.cget("text")[6:-3]
-        time = f"{'0' if time == '23' else str(int(time) + 1).zfill(2)}:00"
-
-        self.clock_label.config(text=f"Time: {time}")
-        self.win.after(3000, self.update_clock)
 
     def create_widgets(self):
         turn_on_all_button = Button(

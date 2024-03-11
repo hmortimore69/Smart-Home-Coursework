@@ -15,6 +15,7 @@ class SmartHomeSystem:
         self.device_schedular_win = None
         self.add_event_win = None
         self.add_win = None
+        self.win = Tk()
 
         self.main_frame = None
         self.create_widget_frame = None
@@ -24,7 +25,6 @@ class SmartHomeSystem:
         self.curr_time = "00:00"
         self.theme = "light"
 
-        self.win = Tk()
         self.win.title("Smart Home System")
 
         # Create all images and resize to appropriate sizes.
