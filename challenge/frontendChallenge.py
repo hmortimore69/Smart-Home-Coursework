@@ -106,7 +106,7 @@ class SmartHomeSystem:
 
         for i, device in enumerate(self.home.get_devices()):
             for event in device.get_schedule():
-                if event[0] == time:
+                if event[0] == self.curr_time:
                     device.switched_on = event[1]
                     if isinstance(device, SmartPlug):
                         device.set_consumption_rate(event[2])
