@@ -756,7 +756,7 @@ class SmartHomeSystem:
         )
         choose_option.grid(column=1, row=0, padx=10, pady=(10, 2), sticky="SW")
 
-        option_menu = ttk.Combobox(
+        device_option_menu = ttk.Combobox(
             self.device_scheduler_win,
             values=option_choices,
             width=23,
@@ -764,13 +764,13 @@ class SmartHomeSystem:
             font=self.font_final,
             style="TCombobox"  # Use the custom style for the combobox
         )
-        option_menu.grid(column=1, row=1, padx=10, pady=(0, 10), sticky="N")
-        option_menu.bind(
+        device_option_menu.grid(column=1, row=1, padx=10, pady=(0, 10), sticky="N")
+        device_option_menu.bind(
             "<<ComboboxSelected>>",
-            lambda event, menu=option_menu: self.load_device_schedule(self.current_schedule_frame, menu.get())
+            lambda event, menu=device_option_menu: self.load_device_schedule(self.current_schedule_frame, menu.get())
         )
-        option_menu.current(0)
-        self.load_device_schedule(self.current_schedule_frame, option_menu.get())
+        device_option_menu.current(0)
+        self.load_device_schedule(self.current_schedule_frame, device_option_menu.get())
 
         add_event_win_button = Button(
             self.device_scheduler_win,
@@ -778,7 +778,7 @@ class SmartHomeSystem:
             font=self.font_final,
             fg=self.text_colour,
             bg=self.button_colour,
-            command=lambda: self.add_event_button_pressed(option_menu.get())
+            command=lambda: self.add_event_button_pressed(device_option_menu.get())
         )
         add_event_win_button.grid(column=1, row=2, padx=10, pady=10)
 
@@ -788,7 +788,7 @@ class SmartHomeSystem:
             font=self.font_final,
             fg=self.text_colour,
             bg=self.button_colour,
-            command=lambda: self.clear_events_button_pressed(option_menu.get())
+            command=lambda: self.clear_events_button_pressed(device_option_menu.get())
         )
         clear_events_win_button.grid(column=3, row=2, padx=10, pady=10)
 
